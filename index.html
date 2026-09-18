@@ -12,88 +12,113 @@
       box-sizing: border-box;
       margin: 0;
       padding: 0;
+      font-family: Arial, sans-serif;
     }
 
     body {
-      font-family: Arial, sans-serif;
-      background: #07101f;
+      background: #070b14;
       color: #ffffff;
       min-height: 100vh;
     }
 
     .app {
-      max-width: 520px;
+      max-width: 480px;
       margin: auto;
-      padding: 18px 16px 90px;
+      padding-bottom: 90px;
     }
 
+    /* Header */
     .header {
+      padding: 22px 18px;
       display: flex;
       align-items: center;
-      justify-content: space-between;
-      margin-bottom: 22px;
-    }
-
-    .brand {
-      display: flex;
-      align-items: center;
-      gap: 10px;
+      gap: 12px;
     }
 
     .logo {
-      width: 45px;
-      height: 45px;
-      border-radius: 50%;
-      background: linear-gradient(135deg, #087cff, #11d9ff);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 20px;
-      font-weight: 800;
-      box-shadow: 0 0 20px rgba(0, 180, 255, .25);
+      width: 52px;
+      height: 52px;
+      object-fit: contain;
+      border-radius: 14px;
     }
 
-    .brand h2 {
-      font-size: 19px;
+    .brand h1 {
+      font-size: 22px;
+      letter-spacing: 1px;
     }
 
-    .brand span {
-      color: #18cfff;
-      font-size: 11px;
+    .brand p {
+      color: #8c96aa;
+      font-size: 12px;
+      margin-top: 4px;
     }
 
-    .network {
-      font-size: 11px;
-      padding: 7px 10px;
-      border-radius: 20px;
-      background: #10223a;
-      color: #3edcff;
+    /* Pages */
+    .page {
+      display: none;
+      padding: 0 16px;
     }
 
+    .page.active {
+      display: block;
+    }
+
+    /* Balance */
     .balance-card {
-      background: linear-gradient(145deg, #102b4c, #0b1729);
-      border: 1px solid #1d4267;
-      border-radius: 20px;
-      padding: 22px;
+      background: linear-gradient(145deg, #111a2b, #0b111f);
+      border: 1px solid #1c2b45;
+      border-radius: 22px;
+      padding: 24px;
       margin-bottom: 16px;
     }
 
-    .label {
-      color: #91a5bc;
+    .balance-title {
+      color: #8c96aa;
       font-size: 13px;
+      margin-bottom: 10px;
     }
 
     .balance {
-      font-size: 32px;
-      font-weight: 800;
-      margin: 8px 0;
+      font-size: 34px;
+      font-weight: bold;
     }
 
-    .usdt {
-      color: #25d6a2;
-      font-size: 13px;
+    .currency {
+      font-size: 15px;
+      color: #8c96aa;
+      margin-left: 5px;
     }
 
+    .buttons {
+      display: flex;
+      gap: 10px;
+      margin-top: 20px;
+    }
+
+    button {
+      border: none;
+      cursor: pointer;
+    }
+
+    .primary {
+      flex: 1;
+      padding: 13px;
+      border-radius: 12px;
+      background: #2d7cff;
+      color: white;
+      font-weight: bold;
+    }
+
+    .secondary {
+      flex: 1;
+      padding: 13px;
+      border-radius: 12px;
+      background: #182238;
+      color: white;
+      font-weight: bold;
+    }
+
+    /* Stats */
     .stats {
       display: grid;
       grid-template-columns: 1fr 1fr;
@@ -102,147 +127,188 @@
     }
 
     .stat {
-      background: #0d1a2d;
-      border: 1px solid #19304a;
-      border-radius: 16px;
-      padding: 16px;
-    }
-
-    .stat strong {
-      display: block;
-      margin-top: 8px;
-      font-size: 18px;
-    }
-
-    .actions {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 12px;
-      margin-bottom: 22px;
-    }
-
-    button {
-      border: 0;
-      border-radius: 14px;
-      padding: 15px;
-      font-size: 15px;
-      font-weight: 700;
-      cursor: pointer;
-    }
-
-    .deposit {
-      background: #18cfff;
-      color: #06111e;
-    }
-
-    .withdraw {
-      background: #142941;
-      color: #ffffff;
-      border: 1px solid #28506f;
-    }
-
-    .section-title {
-      font-size: 17px;
-      margin-bottom: 12px;
-    }
-
-    .plan {
-      background: #0d1a2d;
-      border: 1px solid #19304a;
+      background: #0d1422;
+      border: 1px solid #18253a;
       border-radius: 17px;
-      padding: 17px;
-      margin-bottom: 10px;
+      padding: 18px;
+    }
+
+    .stat-label {
+      color: #7f8ba0;
+      font-size: 12px;
+      margin-bottom: 8px;
+    }
+
+    .stat-value {
+      font-size: 18px;
+      font-weight: bold;
+    }
+
+    /* Section */
+    .section-title {
+      font-size: 18px;
+      margin: 22px 0 12px;
+    }
+
+    /* Plans */
+    .plan {
+      background: #0d1422;
+      border: 1px solid #1a2941;
+      border-radius: 18px;
+      padding: 18px;
+      margin-bottom: 12px;
     }
 
     .plan-top {
       display: flex;
       justify-content: space-between;
-      margin-bottom: 10px;
+      align-items: center;
     }
 
     .plan-name {
-      font-weight: 700;
+      font-size: 16px;
+      font-weight: bold;
     }
 
-    .plan-rate {
-      color: #18cfff;
-      font-weight: 700;
+    .plan-tag {
+      background: #16294a;
+      color: #70a7ff;
+      padding: 5px 9px;
+      border-radius: 8px;
+      font-size: 10px;
     }
 
     .plan p {
-      color: #91a5bc;
+      color: #7f8ba0;
       font-size: 12px;
+      margin-top: 8px;
     }
 
+    .plan-btn {
+      width: 100%;
+      margin-top: 14px;
+      padding: 11px;
+      border-radius: 10px;
+      background: #131e31;
+      color: #b9c7dc;
+    }
+
+    /* Referral */
     .ref-card {
-      background: linear-gradient(145deg, #162743, #0c1729);
-      border: 1px solid #274765;
-      border-radius: 18px;
-      padding: 18px;
-      margin-top: 20px;
+      background: linear-gradient(145deg, #101a2d, #0b111e);
+      border: 1px solid #203352;
+      border-radius: 20px;
+      padding: 22px;
     }
 
     .commission {
-      color: #25d6a2;
-      font-size: 23px;
-      font-weight: 800;
-      margin: 8px 0;
+      font-size: 30px;
+      font-weight: bold;
+      margin: 10px 0;
+    }
+
+    .muted {
+      color: #818da1;
+      font-size: 13px;
+      line-height: 1.5;
     }
 
     .ref-link {
-      background: #071321;
-      border: 1px solid #203b55;
-      border-radius: 10px;
+      background: #070c15;
+      border: 1px solid #1b2a42;
+      border-radius: 11px;
       padding: 12px;
-      margin: 12px 0;
+      margin-top: 16px;
+      font-size: 11px;
+      color: #9aa8bd;
+      word-break: break-all;
+    }
+
+    /* History */
+    .empty {
+      text-align: center;
+      padding: 55px 20px;
+      color: #69758a;
+    }
+
+    .empty-icon {
+      font-size: 38px;
+      margin-bottom: 12px;
+    }
+
+    /* Profile */
+    .profile-card {
+      background: #0d1422;
+      border: 1px solid #192940;
+      border-radius: 20px;
+      padding: 20px;
+    }
+
+    .profile-row {
+      display: flex;
+      justify-content: space-between;
+      gap: 15px;
+      padding: 15px 0;
+      border-bottom: 1px solid #172238;
+    }
+
+    .profile-row:last-child {
+      border-bottom: none;
+    }
+
+    .profile-label {
+      color: #778398;
       font-size: 12px;
-      color: #8fa6bc;
-      overflow: hidden;
-      white-space: nowrap;
     }
 
-    .invite {
-      width: 100%;
-      background: #18cfff;
-      color: #06111e;
+    .profile-value {
+      font-size: 13px;
+      text-align: right;
+      word-break: break-all;
     }
 
-    .bottom {
+    /* Bottom Navigation */
+    .bottom-nav {
       position: fixed;
       bottom: 0;
       left: 50%;
       transform: translateX(-50%);
-      width: min(520px, 100%);
+      width: 100%;
+      max-width: 480px;
+      height: 72px;
+      background: rgba(7, 11, 20, 0.96);
+      border-top: 1px solid #172238;
       display: grid;
       grid-template-columns: repeat(4, 1fr);
-      background: #091626;
-      border-top: 1px solid #19304a;
-      padding: 10px 6px;
+      z-index: 100;
     }
 
-    .nav {
+    .nav-btn {
       background: transparent;
-      color: #71879d;
-      padding: 8px 3px;
+      color: #66738a;
       font-size: 11px;
+      padding-top: 10px;
     }
 
-    .nav.active {
-      color: #18cfff;
-    }
-
-    .page {
-      display: none;
-    }
-
-    .page.active {
+    .nav-icon {
       display: block;
+      font-size: 20px;
+      margin-bottom: 5px;
     }
 
-    .empty {
-      text-align: center;
-      color: #7f94a9;
-      padding: 40px 15px;
+    .nav-btn.active {
+      color: #4d91ff;
+    }
+
+    .notice {
+      background: #111b2d;
+      border: 1px solid #203452;
+      color: #9eacc0;
+      padding: 13px;
+      border-radius: 13px;
+      font-size: 11px;
+      line-height: 1.5;
+      margin-top: 15px;
     }
   </style>
 </head>
@@ -251,221 +317,298 @@
 
 <div class="app">
 
-  <!-- HOME -->
-  <div id="homePage" class="page active">
-
-    <div class="header">
-      <div class="brand">
-        <div class="logo">N</div>
-        <div>
-          <h2>NEXORA AI</h2>
-          <span>SMART ON-CHAIN FINANCE</span>
-        </div>
-      </div>
-
-      <div class="network">● BEP-20</div>
+  <!-- HEADER -->
+  <div class="header">
+    <img src="./logo.png" class="logo" alt="Nexora AI">
+    <div class="brand">
+      <h1>NEXORA AI</h1>
+      <p>Blockchain-powered digital finance</p>
     </div>
+  </div>
+
+  <!-- HOME -->
+  <div id="home" class="page active">
 
     <div class="balance-card">
-      <div class="label">Available Balance</div>
-      <div class="balance">0.00</div>
-      <div class="usdt">USDT</div>
+      <div class="balance-title">Available Balance</div>
+      <div class="balance">
+        0.00 <span class="currency">USDT</span>
+      </div>
+
+      <div class="buttons">
+        <button class="primary" onclick="deposit()">Deposit</button>
+        <button class="secondary" onclick="withdraw()">Withdraw</button>
+      </div>
     </div>
 
     <div class="stats">
       <div class="stat">
-        <div class="label">Total Earnings</div>
-        <strong>0.00 USDT</strong>
+        <div class="stat-label">Total Earnings</div>
+        <div class="stat-value">0.00 USDT</div>
       </div>
 
       <div class="stat">
-        <div class="label">Active Investment</div>
-        <strong>0.00 USDT</strong>
+        <div class="stat-label">Active Investment</div>
+        <div class="stat-value">0.00 USDT</div>
       </div>
     </div>
 
-    <div class="actions">
-      <button class="deposit" onclick="demoAction('Deposit')">
-        ↓ Deposit
-      </button>
-
-      <button class="withdraw" onclick="demoAction('Withdrawal')">
-        ↑ Withdraw
-      </button>
-    </div>
-
-    <h3 class="section-title">Investment Plans</h3>
+    <div class="section-title">Investment Plans</div>
 
     <div class="plan">
       <div class="plan-top">
-        <span class="plan-name">Starter</span>
-        <span class="plan-rate">USDT</span>
+        <div class="plan-name">Starter</div>
+        <div class="plan-tag">ACTIVE</div>
       </div>
-      <p>Investment plan details will appear here.</p>
+      <p>Entry-level digital finance plan.</p>
+      <button class="plan-btn" onclick="comingSoon()">View Plan</button>
     </div>
 
     <div class="plan">
       <div class="plan-top">
-        <span class="plan-name">Growth</span>
-        <span class="plan-rate">USDT</span>
+        <div class="plan-name">Growth</div>
+        <div class="plan-tag">POPULAR</div>
       </div>
-      <p>Investment plan details will appear here.</p>
+      <p>Designed for users seeking higher capital allocation.</p>
+      <button class="plan-btn" onclick="comingSoon()">View Plan</button>
+    </div>
+
+    <div class="notice">
+      ⚡ Nexora AI operates with blockchain-based USDT functionality.
+      Investment returns, if offered, are subject to the terms and risks
+      disclosed by the platform.
     </div>
 
   </div>
 
-
   <!-- REFERRAL -->
-  <div id="referralPage" class="page">
-
-    <div class="header">
-      <div>
-        <h2>Referral Program</h2>
-        <span class="label">Invite friends and earn commission</span>
-      </div>
-    </div>
+  <div id="referral" class="page">
 
     <div class="ref-card">
-      <div class="label">Deposit Commission</div>
+      <div class="section-title">Referral Program</div>
 
       <div class="commission">5%</div>
 
-      <p class="label">
-        Earn 5% commission on qualifying confirmed deposits
-        made by your referred users.
+      <p class="muted">
+        Earn a 5% referral commission on qualifying confirmed deposits
+        made by users referred through your referral link.
       </p>
 
       <div class="ref-link" id="refLink">
-        Your referral link will appear here
+        Generating referral link...
       </div>
 
-      <button class="invite" onclick="copyReferral()">
+      <button class="primary" style="width:100%;margin-top:12px"
+        onclick="copyReferral()">
         Copy Referral Link
       </button>
     </div>
 
-    <div class="stats" style="margin-top:16px;">
+    <div class="section-title">Referral Stats</div>
+
+    <div class="stats">
       <div class="stat">
-        <div class="label">Total Referrals</div>
-        <strong>0</strong>
+        <div class="stat-label">Total Referrals</div>
+        <div class="stat-value">0</div>
       </div>
 
       <div class="stat">
-        <div class="label">Commission Earned</div>
-        <strong>0.00 USDT</strong>
+        <div class="stat-label">Referral Earnings</div>
+        <div class="stat-value">0 USDT</div>
       </div>
     </div>
 
   </div>
-
 
   <!-- HISTORY -->
-  <div id="historyPage" class="page">
+  <div id="history" class="page">
 
-    <h2 style="margin-bottom:8px;">Transaction History</h2>
+    <div class="section-title">Transaction History</div>
 
     <div class="empty">
-      No transactions yet.
+      <div class="empty-icon">📊</div>
+      <div>No transactions yet.</div>
     </div>
 
   </div>
-
 
   <!-- PROFILE -->
-  <div id="profilePage" class="page">
+  <div id="profile" class="page">
 
-    <h2 style="margin-bottom:16px;">Profile</h2>
+    <div class="section-title">Profile</div>
 
-    <div class="plan">
-      <div class="label">Telegram User</div>
-      <strong id="telegramUser">Guest User</strong>
-    </div>
+    <div class="profile-card">
 
-    <div class="plan">
-      <div class="label">Network</div>
-      <strong>BNB Smart Chain — BEP-20</strong>
-    </div>
+      <div class="profile-row">
+        <div class="profile-label">Telegram User</div>
+        <div class="profile-value" id="username">Guest</div>
+      </div>
 
-    <div class="plan">
-      <div class="label">Wallet</div>
-      <strong>Not connected</strong>
+      <div class="profile-row">
+        <div class="profile-label">User ID</div>
+        <div class="profile-value" id="userid">—</div>
+      </div>
+
+      <div class="profile-row">
+        <div class="profile-label">Network</div>
+        <div class="profile-value">BNB Smart Chain</div>
+      </div>
+
+      <div class="profile-row">
+        <div class="profile-label">Token</div>
+        <div class="profile-value">USDT (BEP-20)</div>
+      </div>
+
+      <div class="profile-row">
+        <div class="profile-label">Wallet</div>
+        <div class="profile-value">Not connected</div>
+      </div>
+
     </div>
 
   </div>
 
 </div>
 
-
 <!-- BOTTOM NAV -->
-<div class="bottom">
+<div class="bottom-nav">
 
-  <button class="nav active" onclick="showPage('homePage', this)">
-    🏠<br>Home
+  <button class="nav-btn active" onclick="showPage('home', this)">
+    <span class="nav-icon">⌂</span>
+    Home
   </button>
 
-  <button class="nav" onclick="showPage('referralPage', this)">
-    👥<br>Referral
+  <button class="nav-btn" onclick="showPage('referral', this)">
+    <span class="nav-icon">↗</span>
+    Referral
   </button>
 
-  <button class="nav" onclick="showPage('historyPage', this)">
-    📜<br>History
+  <button class="nav-btn" onclick="showPage('history', this)">
+    <span class="nav-icon">◷</span>
+    History
   </button>
 
-  <button class="nav" onclick="showPage('profilePage', this)">
-    👤<br>Profile
+  <button class="nav-btn" onclick="showPage('profile', this)">
+    <span class="nav-icon">◉</span>
+    Profile
   </button>
 
 </div>
-
 
 <script>
 
-  const tg = window.Telegram?.WebApp;
+  const tg = window.Telegram.WebApp;
 
-  if (tg) {
-    tg.ready();
-    tg.expand();
+  tg.ready();
+  tg.expand();
 
-    const user = tg.initDataUnsafe?.user;
+  const user = tg.initDataUnsafe?.user;
 
-    if (user) {
-      document.getElementById("telegramUser").textContent =
-        user.first_name || "Telegram User";
+  if (user) {
 
-      document.getElementById("refLink").textContent =
-        "https://t.me/NexoraAI_Pay_bot?start=" + user.id;
+    document.getElementById("userid").innerText = user.id;
+
+    let name = "";
+
+    if (user.first_name) {
+      name += user.first_name;
     }
+
+    if (user.last_name) {
+      name += " " + user.last_name;
+    }
+
+    if (user.username) {
+      name += " @" + user.username;
+    }
+
+    document.getElementById("username").innerText =
+      name || "Telegram User";
+
+    const referralLink =
+      "https://t.me/NexoraAI_Pay_bot?start=" + user.id;
+
+    document.getElementById("refLink").innerText =
+      referralLink;
+
+  } else {
+
+    document.getElementById("refLink").innerText =
+      "Open Nexora AI from Telegram to generate your referral link.";
+
   }
 
-  function showPage(pageId, button) {
 
-    document.querySelectorAll(".page").forEach(page => {
-      page.classList.remove("active");
+  function showPage(page, button) {
+
+    document.querySelectorAll(".page").forEach(function(p) {
+      p.classList.remove("active");
     });
 
-    document.getElementById(pageId).classList.add("active");
+    document.getElementById(page).classList.add("active");
 
-    document.querySelectorAll(".nav").forEach(nav => {
-      nav.classList.remove("active");
+    document.querySelectorAll(".nav-btn").forEach(function(btn) {
+      btn.classList.remove("active");
     });
 
     button.classList.add("active");
+
+    window.scrollTo(0, 0);
   }
+
 
   function copyReferral() {
 
-    const link = document.getElementById("refLink").textContent;
+    const link =
+      document.getElementById("refLink").innerText;
 
-    if (navigator.clipboard) {
-      navigator.clipboard.writeText(link);
-      alert("Referral link copied!");
-    } else {
-      alert(link);
-    }
+    navigator.clipboard.writeText(link).then(function() {
+
+      tg.showPopup({
+        title: "Referral Link",
+        message: "Referral link copied successfully.",
+        buttons: [{type: "ok"}]
+      });
+
+    }).catch(function() {
+
+      alert("Copy failed. Please copy the link manually.");
+
+    });
+
   }
 
-  function demoAction(action) {
-    alert(action + " system will be connected in the next step.");
+
+  function deposit() {
+
+    tg.showPopup({
+      title: "Deposit",
+      message: "USDT BEP-20 deposit functionality will be connected in the next stage.",
+      buttons: [{type: "ok"}]
+    });
+
+  }
+
+
+  function withdraw() {
+
+    tg.showPopup({
+      title: "Withdraw",
+      message: "Withdrawal functionality will be connected after wallet and transaction verification are implemented.",
+      buttons: [{type: "ok"}]
+    });
+
+  }
+
+
+  function comingSoon() {
+
+    tg.showPopup({
+      title: "Coming Soon",
+      message: "Investment plan functionality is currently being prepared.",
+      buttons: [{type: "ok"}]
+    });
+
   }
 
 </script>
