@@ -3,1119 +3,1251 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<meta name="theme-color" content="#070706">
-<title>NEXORA AI</title>
+
+<title>Nexora AI</title>
 
 <style>
 :root{
-  --bg:#070706;
-  --bg2:#0c0b09;
-  --card:#11100d;
-  --card2:#15130f;
-  --gold:#f1d48b;
-  --gold2:#ffe7a6;
-  --gold3:#c9a85d;
-  --text:#fff8e8;
-  --muted:#a9a08d;
-  --border:rgba(241,212,139,.18);
-  --glow:rgba(241,212,139,.20);
-  --success:#dff7b0;
-  --danger:#ffb8a8;
+    --bg:#070706;
+    --bg2:#0d0c09;
+    --card:#11100d;
+    --card2:#16140f;
+
+    --gold:#f1d48b;
+    --gold2:#ffe7a6;
+    --gold3:#c9a85d;
+
+    --text:#fff8e8;
+    --muted:#a9a08d;
+
+    --border:rgba(241,212,139,.18);
+    --glow:rgba(241,212,139,.22);
+
+    --green:#b9e8bd;
+    --red:#f0a5a5;
 }
 
 *{
-  box-sizing:border-box;
-  -webkit-tap-highlight-color:transparent;
+    box-sizing:border-box;
+    -webkit-tap-highlight-color:transparent;
 }
 
 html,body{
-  margin:0;
-  padding:0;
-  background:
-    radial-gradient(circle at 50% -10%,rgba(241,212,139,.10),transparent 35%),
-    linear-gradient(180deg,#080806,#050504);
-  color:var(--text);
-  font-family:Inter,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
-  min-height:100%;
+    margin:0;
+    min-height:100%;
+    background:
+        radial-gradient(circle at 50% -10%,#292114 0,#0b0a08 32%,#070706 72%);
+    color:var(--text);
+    font-family:Inter,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
 }
 
 body{
-  overflow-x:hidden;
+    overflow-x:hidden;
 }
 
 button,input{
-  font:inherit;
+    font:inherit;
 }
 
 button{
-  cursor:pointer;
+    cursor:pointer;
 }
 
 .app{
-  width:100%;
-  max-width:520px;
-  min-height:100vh;
-  margin:auto;
-  position:relative;
-  padding-bottom:105px;
+    width:100%;
+    max-width:520px;
+    min-height:100vh;
+    margin:auto;
+    padding:14px 14px 105px;
+    position:relative;
 }
 
-.app:before{
-  content:"";
-  position:fixed;
-  width:330px;
-  height:330px;
-  left:50%;
-  top:35%;
-  transform:translate(-50%,-50%);
-  background:url("logo.png") center/contain no-repeat;
-  opacity:.018;
-  filter:blur(.2px);
-  pointer-events:none;
-  z-index:0;
+.app::before{
+    content:"";
+    position:fixed;
+    inset:20% -20% auto;
+    height:450px;
+    background:url("logo.png") center/300px no-repeat;
+    opacity:.025;
+    filter:drop-shadow(0 0 45px var(--gold));
+    pointer-events:none;
+    z-index:0;
 }
 
-.glow-orb{
-  position:fixed;
-  width:190px;
-  height:190px;
-  border-radius:50%;
-  background:rgba(241,212,139,.045);
-  filter:blur(55px);
-  right:-90px;
-  top:110px;
-  pointer-events:none;
-}
+/* =========================
+HEADER
+========================= */
 
 header{
-  height:82px;
-  display:flex;
-  align-items:center;
-  justify-content:space-between;
-  padding:12px 17px;
-  position:relative;
-  z-index:5;
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    margin-bottom:17px;
+    position:relative;
+    z-index:2;
 }
 
 .brand{
-  display:flex;
-  align-items:center;
-  gap:11px;
+    display:flex;
+    align-items:center;
+    gap:11px;
 }
 
 .brand-logo{
-  width:54px;
-  height:54px;
-  object-fit:contain;
-  border-radius:17px;
-  filter:
-    drop-shadow(0 0 8px rgba(241,212,139,.22))
-    drop-shadow(0 0 20px rgba(241,212,139,.08));
-}
-
-.brand-text{
-  display:flex;
-  flex-direction:column;
-  line-height:1;
+    width:54px;
+    height:54px;
+    border-radius:16px;
+    object-fit:contain;
+    border:1px solid var(--border);
+    background:#0c0b09;
+    box-shadow:0 0 24px var(--glow);
 }
 
 .brand-name{
-  color:var(--gold2);
-  font-size:15px;
-  font-weight:800;
-  letter-spacing:2px;
+    font-size:15px;
+    font-weight:800;
+    letter-spacing:1.7px;
 }
 
 .brand-sub{
-  margin-top:6px;
-  color:var(--gold);
-  font-size:9px;
-  font-weight:700;
-  letter-spacing:1.4px;
-  white-space:nowrap;
+    font-size:9px;
+    color:var(--gold3);
+    letter-spacing:1.15px;
+    margin-top:3px;
 }
 
-.header-actions{
-  display:flex;
-  gap:8px;
+.head-actions{
+    display:flex;
+    gap:8px;
 }
 
 .icon-btn{
-  width:42px;
-  height:42px;
-  border-radius:14px;
-  border:1px solid var(--border);
-  background:rgba(255,255,255,.025);
-  color:var(--gold2);
-  display:grid;
-  place-items:center;
-  box-shadow:inset 0 0 18px rgba(241,212,139,.025);
+    width:39px;
+    height:39px;
+    border:1px solid var(--border);
+    border-radius:13px;
+    background:rgba(255,255,255,.025);
+    display:grid;
+    place-items:center;
+    color:var(--gold2);
+    box-shadow:0 8px 22px rgba(0,0,0,.18);
 }
 
 .icon-btn svg{
-  width:19px;
-  height:19px;
-  stroke:currentColor;
-  fill:none;
-  stroke-width:1.7;
+    width:18px;
+    height:18px;
 }
 
+/* =========================
+PAGES
+========================= */
+
 .page{
-  display:none;
-  position:relative;
-  z-index:1;
-  padding:4px 15px 25px;
-  animation:pageIn .3s ease;
+    display:none;
+    position:relative;
+    z-index:1;
+    animation:pageIn .28s ease;
 }
 
 .page.active{
-  display:block;
+    display:block;
 }
 
 @keyframes pageIn{
-  from{
-    opacity:0;
-    transform:translateY(6px);
-  }
-  to{
-    opacity:1;
-    transform:translateY(0);
-  }
+    from{
+        opacity:0;
+        transform:translateY(7px);
+    }
+    to{
+        opacity:1;
+        transform:none;
+    }
 }
+
+/* =========================
+HERO
+========================= */
 
 .hero{
-  position:relative;
-  overflow:hidden;
-  padding:24px 20px 20px;
-  border:1px solid rgba(241,212,139,.22);
-  border-radius:27px;
-  background:
-    radial-gradient(circle at 80% 10%,rgba(255,231,166,.10),transparent 35%),
-    linear-gradient(145deg,rgba(255,255,255,.045),rgba(255,255,255,.012));
-  box-shadow:
-    inset 0 1px rgba(255,255,255,.06),
-    0 18px 50px rgba(0,0,0,.28);
+    border:1px solid var(--border);
+    border-radius:26px;
+    padding:20px;
+    background:
+        linear-gradient(
+            145deg,
+            rgba(255,255,255,.055),
+            rgba(255,255,255,.012)
+        );
+    box-shadow:
+        0 18px 50px rgba(0,0,0,.3),
+        inset 0 1px rgba(255,255,255,.04);
+    position:relative;
+    overflow:hidden;
 }
 
-.hero:after{
-  content:"";
-  position:absolute;
-  width:180px;
-  height:180px;
-  right:-80px;
-  bottom:-100px;
-  border-radius:50%;
-  background:rgba(241,212,139,.12);
-  filter:blur(45px);
+.hero::after{
+    content:"";
+    position:absolute;
+    width:180px;
+    height:180px;
+    right:-70px;
+    top:-70px;
+    border-radius:50%;
+    background:var(--glow);
+    filter:blur(38px);
 }
 
 .eyebrow{
-  color:var(--muted);
-  font-size:11px;
-  letter-spacing:1.5px;
-  text-transform:uppercase;
+    font-size:10px;
+    color:var(--gold3);
+    letter-spacing:1.5px;
+    text-transform:uppercase;
 }
 
 .balance{
-  margin-top:8px;
-  font-size:34px;
-  font-weight:850;
-  letter-spacing:-1px;
-  color:#fff8e8;
+    font-size:31px;
+    font-weight:800;
+    letter-spacing:-.7px;
+    margin-top:7px;
+    position:relative;
+    z-index:1;
 }
 
-.currency{
-  color:var(--gold);
-  font-size:14px;
-  margin-left:5px;
-  letter-spacing:.5px;
-}
-
-.balance-row{
-  display:flex;
-  align-items:center;
-  justify-content:space-between;
-  gap:12px;
-  margin-top:10px;
+.balance span{
+    font-size:14px;
+    color:var(--gold);
+    font-weight:700;
 }
 
 .change{
-  color:var(--success);
-  font-size:12px;
-  font-weight:700;
+    font-size:11px;
+    color:var(--green);
+    margin-top:5px;
 }
 
-.available{
-  color:var(--muted);
-  font-size:12px;
+.mini-row{
+    display:flex;
+    justify-content:space-between;
+    margin-top:20px;
+    position:relative;
+    z-index:1;
 }
 
-.available strong{
-  color:var(--text);
+.mini-label{
+    font-size:10px;
+    color:var(--muted);
 }
 
-.action-row{
-  display:grid;
-  grid-template-columns:1fr 1fr;
-  gap:10px;
-  margin-top:20px;
+.mini-value{
+    font-size:13px;
+    font-weight:700;
+    margin-top:4px;
 }
 
-.action-btn{
-  min-height:48px;
-  border-radius:16px;
-  border:1px solid rgba(241,212,139,.22);
-  background:rgba(241,212,139,.07);
-  color:var(--gold2);
-  font-weight:750;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  gap:8px;
-  box-shadow:inset 0 0 20px rgba(241,212,139,.025);
+/* =========================
+BUTTONS
+========================= */
+
+.actions{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:10px;
+    margin:12px 0;
 }
 
-.action-btn.primary{
-  background:linear-gradient(135deg,rgba(255,231,166,.18),rgba(201,168,93,.07));
-  box-shadow:
-    0 0 24px rgba(241,212,139,.07),
-    inset 0 1px rgba(255,255,255,.08);
+.btn{
+    border:1px solid var(--border);
+    border-radius:15px;
+    padding:13px;
+    background:
+        linear-gradient(
+            135deg,
+            rgba(241,212,139,.17),
+            rgba(241,212,139,.045)
+        );
+    color:var(--gold2);
+    font-weight:800;
+    box-shadow:0 10px 24px rgba(0,0,0,.2);
 }
 
-.action-btn svg{
-  width:17px;
-  height:17px;
-  stroke:currentColor;
-  fill:none;
-  stroke-width:1.8;
+.btn.secondary{
+    background:rgba(255,255,255,.025);
+    color:var(--text);
 }
+
+/* =========================
+SECTION
+========================= */
 
 .section-title{
-  margin:23px 3px 11px;
-  display:flex;
-  justify-content:space-between;
-  align-items:center;
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    margin:20px 2px 10px;
 }
 
 .section-title h2{
-  font-size:15px;
-  margin:0;
-  letter-spacing:.2px;
+    font-size:14px;
+    margin:0;
+    letter-spacing:.3px;
 }
 
-.section-title span{
-  color:var(--muted);
-  font-size:10px;
+.section-title small{
+    font-size:10px;
+    color:var(--muted);
 }
 
-.mining-card{
-  border:1px solid var(--border);
-  border-radius:22px;
-  padding:17px;
-  background:
-    linear-gradient(145deg,rgba(255,255,255,.035),rgba(255,255,255,.012));
+/* =========================
+CARD
+========================= */
+
+.card{
+    border:1px solid var(--border);
+    background:
+        linear-gradient(
+            145deg,
+            rgba(255,255,255,.045),
+            rgba(255,255,255,.018)
+        );
+    border-radius:20px;
+    padding:15px;
+    box-shadow:0 14px 35px rgba(0,0,0,.22);
 }
 
-.mining-top{
-  display:flex;
-  align-items:center;
-  justify-content:space-between;
+/* =========================
+LIVE MINING
+========================= */
+
+.live-head{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
 }
 
 .live{
-  display:flex;
-  align-items:center;
-  gap:7px;
-  color:var(--gold2);
-  font-size:11px;
-  font-weight:800;
-  letter-spacing:1px;
+    display:flex;
+    align-items:center;
+    gap:6px;
+    font-size:10px;
+    color:#d9f0db;
+    letter-spacing:1px;
 }
 
-.live-dot{
-  width:7px;
-  height:7px;
-  border-radius:50%;
-  background:#eaffb8;
-  box-shadow:0 0 10px rgba(234,255,184,.75);
-  animation:pulse 1.5s infinite;
+.dot{
+    width:7px;
+    height:7px;
+    border-radius:50%;
+    background:#b9e8bd;
+    box-shadow:0 0 10px #b9e8bd;
+    animation:pulse 1.2s infinite;
 }
 
 @keyframes pulse{
-  50%{
-    opacity:.35;
-    transform:scale(.7);
-  }
+    50%{
+        opacity:.35;
+        transform:scale(.7);
+    }
 }
 
-.mining-value{
-  margin-top:13px;
-  font-size:23px;
-  font-weight:800;
-  color:var(--gold2);
+/* STEP 1 */
+
+.mining-number{
+    font-size:27px;
+    font-weight:800;
+    margin:9px 0 2px;
+    color:var(--gold2);
+    text-shadow:
+        0 0 10px rgba(241,212,139,.18),
+        0 0 24px rgba(241,212,139,.08);
+    transition:
+        transform .18s ease,
+        text-shadow .18s ease;
+    letter-spacing:.2px;
 }
 
-.mining-rate{
-  color:var(--muted);
-  font-size:11px;
-  margin-top:4px;
+.mining-number.bump{
+    transform:scale(1.035);
+    text-shadow:
+        0 0 12px rgba(241,212,139,.32),
+        0 0 30px rgba(241,212,139,.14);
+}
+
+.rate{
+    font-size:10px;
+    color:var(--muted);
 }
 
 .progress{
-  height:6px;
-  margin-top:15px;
-  border-radius:20px;
-  overflow:hidden;
-  background:rgba(255,255,255,.055);
+    height:6px;
+    background:#252119;
+    border-radius:20px;
+    overflow:hidden;
+    margin:13px 0;
 }
 
 .progress span{
-  display:block;
-  width:68%;
-  height:100%;
-  border-radius:20px;
-  background:linear-gradient(90deg,var(--gold3),var(--gold2));
-  box-shadow:0 0 14px rgba(241,212,139,.35);
-  animation:progressMove 2.4s ease-in-out infinite alternate;
+    display:block;
+    height:100%;
+    width:67%;
+    background:
+        linear-gradient(
+            90deg,
+            var(--gold3),
+            var(--gold2)
+        );
+    border-radius:20px;
+    box-shadow:0 0 14px var(--gold);
 }
 
-@keyframes progressMove{
-  from{width:62%}
-  to{width:82%}
+.claim{
+    width:100%;
+    padding:11px;
+    border-radius:13px;
+    border:1px solid var(--border);
+    background:rgba(241,212,139,.08);
+    color:var(--gold2);
+    font-weight:800;
 }
 
-.claim-btn{
-  width:100%;
-  height:46px;
-  margin-top:15px;
-  border:1px solid rgba(241,212,139,.25);
-  border-radius:15px;
-  background:rgba(241,212,139,.075);
-  color:var(--gold2);
-  font-weight:800;
+/* =========================
+QUICK ACCESS
+========================= */
+
+.quick{
+    display:grid;
+    grid-template-columns:repeat(4,1fr);
+    gap:8px;
 }
 
-.quick-grid{
-  display:grid;
-  grid-template-columns:1fr 1fr;
-  gap:10px;
+.quick-item{
+    border:1px solid var(--border);
+    border-radius:17px;
+    padding:13px 7px;
+    background:rgba(255,255,255,.025);
+    text-align:center;
+    color:var(--text);
 }
 
-.quick-card{
-  min-height:104px;
-  border:1px solid var(--border);
-  border-radius:20px;
-  padding:16px;
-  background:rgba(255,255,255,.025);
-  transition:.2s;
+.qicon{
+    width:34px;
+    height:34px;
+    margin:0 auto 7px;
+    border-radius:11px;
+    display:grid;
+    place-items:center;
+    background:rgba(241,212,139,.07);
+    color:var(--gold2);
 }
 
-.quick-card:active{
-  transform:scale(.98);
+.qicon svg{
+    width:18px;
+    height:18px;
 }
 
-.quick-icon{
-  width:35px;
-  height:35px;
-  border-radius:12px;
-  display:grid;
-  place-items:center;
-  color:var(--gold2);
-  border:1px solid rgba(241,212,139,.17);
-  background:rgba(241,212,139,.055);
+.quick-item b{
+    font-size:10px;
+    display:block;
 }
 
-.quick-icon svg{
-  width:18px;
-  height:18px;
-  stroke:currentColor;
-  fill:none;
-  stroke-width:1.7;
+.quick-item span{
+    font-size:8px;
+    color:var(--muted);
+    display:block;
+    margin-top:3px;
 }
 
-.quick-title{
-  margin-top:12px;
-  font-size:13px;
-  font-weight:750;
-}
+/* =========================
+FORMS
+========================= */
 
-.quick-desc{
-  margin-top:4px;
-  color:var(--muted);
-  font-size:10px;
-}
-
-/* CALCULATOR */
-
-.calculator{
-  position:relative;
-  overflow:hidden;
-  border:1px solid rgba(241,212,139,.22);
-  border-radius:24px;
-  padding:18px;
-  background:
-    radial-gradient(circle at 100% 0%,rgba(255,231,166,.08),transparent 32%),
-    linear-gradient(145deg,rgba(255,255,255,.045),rgba(255,255,255,.012));
-  box-shadow:
-    inset 0 1px rgba(255,255,255,.055),
-    0 14px 45px rgba(0,0,0,.20);
-}
-
-.calculator-head{
-  display:flex;
-  justify-content:space-between;
-  align-items:center;
-  gap:12px;
-  margin-bottom:17px;
-}
-
-.calc-title-wrap{
-  display:flex;
-  align-items:center;
-  gap:11px;
-}
-
-.calc-icon{
-  width:40px;
-  height:40px;
-  border-radius:13px;
-  display:grid;
-  place-items:center;
-  color:var(--gold2);
-  border:1px solid rgba(241,212,139,.20);
-  background:rgba(241,212,139,.055);
-}
-
-.calc-icon svg{
-  width:20px;
-  height:20px;
-  stroke:currentColor;
-  fill:none;
-  stroke-width:1.6;
-}
-
-.calc-title{
-  font-size:15px;
-  font-weight:800;
-}
-
-.calc-sub{
-  color:var(--muted);
-  font-size:10px;
-  margin-top:3px;
-}
-
-.calc-badge{
-  padding:6px 9px;
-  border-radius:9px;
-  color:var(--gold2);
-  font-size:9px;
-  font-weight:800;
-  letter-spacing:.7px;
-  border:1px solid rgba(241,212,139,.16);
-  background:rgba(241,212,139,.045);
-}
-
-.field{
-  margin-top:12px;
+.form-grid{
+    display:grid;
+    gap:10px;
 }
 
 .field label{
-  display:block;
-  margin-bottom:7px;
-  color:#c5bca8;
-  font-size:11px;
-  font-weight:650;
+    display:block;
+    font-size:10px;
+    color:var(--muted);
+    margin:0 0 6px;
 }
 
-.input-wrap{
-  position:relative;
+.input{
+    width:100%;
+    border:1px solid var(--border);
+    border-radius:13px;
+    background:#0b0a08;
+    color:var(--text);
+    padding:12px;
+    outline:none;
 }
 
-.input-wrap input{
-  width:100%;
-  height:50px;
-  border-radius:15px;
-  border:1px solid rgba(241,212,139,.15);
-  outline:none;
-  padding:0 58px 0 15px;
-  background:rgba(0,0,0,.20);
-  color:var(--text);
-  font-size:16px;
-  font-weight:700;
-  transition:.2s;
+.input:focus{
+    border-color:rgba(241,212,139,.5);
+    box-shadow:0 0 0 3px rgba(241,212,139,.05);
 }
 
-.input-wrap input:focus{
-  border-color:rgba(241,212,139,.50);
-  box-shadow:0 0 0 3px rgba(241,212,139,.055);
-}
-
-.input-suffix{
-  position:absolute;
-  right:14px;
-  top:50%;
-  transform:translateY(-50%);
-  color:var(--gold);
-  font-size:11px;
-  font-weight:800;
-}
-
-.rate-grid{
-  display:grid;
-  grid-template-columns:1fr 1fr;
-  gap:10px;
-}
+/* =========================
+CALCULATOR
+========================= */
 
 .calc-results{
-  margin-top:16px;
-  display:grid;
-  grid-template-columns:1fr 1fr;
-  gap:10px;
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:9px;
+    margin-top:11px;
 }
 
-.result-card{
-  min-height:94px;
-  border-radius:18px;
-  padding:14px;
-  border:1px solid rgba(241,212,139,.16);
-  background:
-    linear-gradient(145deg,rgba(241,212,139,.075),rgba(255,255,255,.018));
+.result{
+    padding:13px;
+    border-radius:15px;
+    background:rgba(241,212,139,.055);
+    border:1px solid var(--border);
 }
 
-.result-label{
-  color:var(--muted);
-  font-size:10px;
-  font-weight:650;
+.result small{
+    color:var(--muted);
+    font-size:9px;
 }
 
-.result-value{
-  margin-top:10px;
-  color:var(--gold2);
-  font-size:19px;
-  font-weight:850;
-  letter-spacing:-.3px;
-  word-break:break-word;
+.result strong{
+    display:block;
+    font-size:16px;
+    color:var(--gold2);
+    margin-top:4px;
 }
 
-.result-unit{
-  margin-top:2px;
-  color:#bdb39f;
-  font-size:9px;
+.note{
+    font-size:9px;
+    color:var(--muted);
+    line-height:1.5;
+    margin-top:10px;
 }
 
-.calc-note{
-  margin-top:12px;
-  color:#77705f;
-  font-size:9px;
-  line-height:1.45;
+/* =========================
+STATS
+========================= */
+
+.stats-grid{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:9px;
 }
 
-/* OTHER PAGES */
-
-.panel{
-  border:1px solid var(--border);
-  border-radius:23px;
-  padding:18px;
-  background:rgba(255,255,255,.025);
-  margin-bottom:12px;
+.stat{
+    padding:14px;
+    border:1px solid var(--border);
+    border-radius:16px;
+    background:rgba(255,255,255,.025);
 }
 
-.stat-grid{
-  display:grid;
-  grid-template-columns:1fr 1fr;
-  gap:10px;
+.stat small{
+    font-size:9px;
+    color:var(--muted);
 }
 
-.stat-card{
-  padding:16px;
-  border:1px solid var(--border);
-  border-radius:18px;
-  background:rgba(255,255,255,.02);
+.stat strong{
+    display:block;
+    margin-top:5px;
+    font-size:17px;
 }
 
-.stat-card span{
-  color:var(--muted);
-  font-size:10px;
+/* =========================
+STEP 3 CHART
+========================= */
+
+.chart-head{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    margin-bottom:5px;
 }
 
-.stat-card strong{
-  display:block;
-  margin-top:7px;
-  font-size:19px;
-  color:var(--gold2);
+.chart-title{
+    font-size:12px;
+    font-weight:800;
 }
 
-.form-label{
-  display:block;
-  margin-bottom:7px;
-  color:#c6bda9;
-  font-size:11px;
+.periods{
+    display:flex;
+    gap:5px;
 }
 
-.form-input{
-  width:100%;
-  height:50px;
-  border:1px solid var(--border);
-  border-radius:15px;
-  background:rgba(0,0,0,.2);
-  color:white;
-  padding:0 14px;
-  outline:none;
+.period{
+    border:1px solid var(--border);
+    background:transparent;
+    color:var(--muted);
+    font-size:9px;
+    padding:7px 9px;
+    border-radius:9px;
 }
 
-.form-input:focus{
-  border-color:rgba(241,212,139,.5);
+.period.active{
+    background:rgba(241,212,139,.12);
+    color:var(--gold2);
 }
 
-.full-btn{
-  width:100%;
-  height:48px;
-  border:1px solid rgba(241,212,139,.25);
-  border-radius:15px;
-  background:rgba(241,212,139,.08);
-  color:var(--gold2);
-  font-weight:800;
-  margin-top:13px;
+.chart-summary{
+    font-size:22px;
+    font-weight:800;
+    color:var(--gold2);
+    margin-top:8px;
 }
+
+.chart-summary small{
+    color:var(--green);
+    font-size:9px;
+    font-weight:600;
+}
+
+.chart{
+    height:175px;
+    display:flex;
+    align-items:end;
+    gap:7px;
+    padding:16px 7px 22px;
+    position:relative;
+}
+
+.bar{
+    flex:1;
+    min-width:7px;
+    height:var(--h);
+    background:
+        linear-gradient(
+            180deg,
+            var(--gold2),
+            var(--gold3)
+        );
+    border-radius:8px 8px 3px 3px;
+    box-shadow:
+        0 0 13px
+        rgba(241,212,139,.13);
+
+    position:relative;
+
+    transform-origin:bottom;
+    animation:barIn .7s ease both;
+}
+
+@keyframes barIn{
+    from{
+        transform:scaleY(0);
+    }
+
+    to{
+        transform:scaleY(1);
+    }
+}
+
+.bar span{
+    position:absolute;
+    bottom:-18px;
+    left:50%;
+    transform:translateX(-50%);
+    font-size:8px;
+    color:var(--muted);
+}
+
+/* =========================
+TRANSACTIONS
+========================= */
+
+.tx{
+    display:flex;
+    align-items:center;
+    gap:11px;
+    padding:12px 0;
+    border-bottom:1px solid rgba(255,255,255,.055);
+}
+
+.tx:last-child{
+    border-bottom:0;
+}
+
+.tx-icon{
+    width:36px;
+    height:36px;
+    border-radius:12px;
+    display:grid;
+    place-items:center;
+    background:rgba(241,212,139,.07);
+    color:var(--gold2);
+}
+
+.tx-icon svg{
+    width:17px;
+}
+
+.tx-main{
+    flex:1;
+}
+
+.tx-main b{
+    font-size:11px;
+}
+
+.tx-main small{
+    display:block;
+    color:var(--muted);
+    font-size:9px;
+    margin-top:3px;
+}
+
+.tx-amt{
+    text-align:right;
+    font-size:11px;
+    font-weight:800;
+}
+
+.positive{
+    color:var(--green);
+}
+
+.negative{
+    color:var(--red);
+}
+
+/* =========================
+NFT
+========================= */
 
 .nft-grid{
-  display:grid;
-  grid-template-columns:1fr 1fr;
-  gap:10px;
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:10px;
 }
 
 .nft{
-  border:1px solid var(--border);
-  border-radius:20px;
-  padding:12px;
-  background:rgba(255,255,255,.025);
+    border:1px solid var(--border);
+    border-radius:19px;
+    padding:10px;
+    background:
+        linear-gradient(
+            145deg,
+            rgba(255,255,255,.045),
+            rgba(255,255,255,.015)
+        );
+    overflow:hidden;
 }
 
 .nft img{
-  width:100%;
-  aspect-ratio:1;
-  object-fit:contain;
-  border-radius:15px;
-  background:rgba(0,0,0,.20);
+    width:100%;
+    aspect-ratio:1;
+    border-radius:14px;
+    object-fit:cover;
+    background:#0b0a08;
 }
 
-.nft-name{
-  margin-top:10px;
-  font-size:12px;
-  font-weight:750;
+.nft b{
+    font-size:10px;
+    display:block;
+    margin-top:8px;
 }
 
-.nft-status{
-  color:var(--muted);
-  font-size:9px;
-  margin-top:4px;
+.nft small{
+    font-size:8px;
+    color:var(--gold3);
 }
+
+/* =========================
+REFERRAL
+========================= */
 
 .ref-code{
-  padding:14px;
-  border-radius:15px;
-  border:1px dashed rgba(241,212,139,.28);
-  color:var(--gold2);
-  text-align:center;
-  font-size:18px;
-  font-weight:850;
-  letter-spacing:3px;
-  background:rgba(241,212,139,.035);
+    display:flex;
+    gap:8px;
 }
 
-.activity{
-  display:flex;
-  align-items:center;
-  justify-content:space-between;
-  padding:13px 0;
-  border-bottom:1px solid rgba(255,255,255,.055);
+.ref-code input{
+    flex:1;
 }
 
-.activity:last-child{
-  border-bottom:0;
+.copy{
+    width:78px;
 }
 
-.activity-left{
-  display:flex;
-  gap:10px;
-  align-items:center;
+/* =========================
+PROFILE
+========================= */
+
+.profile{
+    display:flex;
+    align-items:center;
+    gap:12px;
 }
 
-.activity-icon{
-  width:34px;
-  height:34px;
-  border-radius:11px;
-  display:grid;
-  place-items:center;
-  border:1px solid var(--border);
-  color:var(--gold2);
+.avatar{
+    width:58px;
+    height:58px;
+    border-radius:18px;
+    border:1px solid var(--border);
+    padding:6px;
+    background:#0c0b09;
 }
 
-.activity-icon svg{
-  width:16px;
-  height:16px;
-  stroke:currentColor;
-  fill:none;
-  stroke-width:1.6;
+.profile b{
+    font-size:14px;
 }
 
-.activity-title{
-  font-size:11px;
-  font-weight:700;
+.profile small{
+    display:block;
+    color:var(--muted);
+    font-size:9px;
+    margin-top:4px;
 }
 
-.activity-time{
-  color:var(--muted);
-  font-size:9px;
-  margin-top:3px;
+.status-row{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    padding:13px 0;
+    border-bottom:1px solid rgba(255,255,255,.055);
 }
 
-.activity-amount{
-  color:var(--gold2);
-  font-size:11px;
-  font-weight:750;
+.status-row:last-child{
+    border-bottom:0;
 }
 
-.profile-head{
-  text-align:center;
-  padding:15px 0 20px;
+.status-left{
+    display:flex;
+    align-items:center;
+    gap:9px;
+    font-size:11px;
 }
 
-.profile-avatar{
-  width:82px;
-  height:82px;
-  margin:auto;
-  border-radius:26px;
-  object-fit:contain;
-  border:1px solid rgba(241,212,139,.25);
-  box-shadow:0 0 30px rgba(241,212,139,.08);
+.status-left svg{
+    width:17px;
+    color:var(--gold2);
 }
 
-.profile-name{
-  margin-top:12px;
-  font-size:17px;
-  font-weight:800;
+.status-pill{
+    font-size:8px;
+    padding:5px 8px;
+    border-radius:9px;
+    border:1px solid rgba(185,232,189,.22);
+    color:var(--green);
+    background:rgba(185,232,189,.05);
 }
 
-.profile-id{
-  color:var(--muted);
-  font-size:10px;
-  margin-top:4px;
-}
-
-/* BOTTOM NAV */
+/* =========================
+BOTTOM NAV
+========================= */
 
 .bottom-nav{
-  position:fixed;
-  left:50%;
-  bottom:12px;
-  transform:translateX(-50%);
-  width:min(calc(100% - 22px),490px);
-  height:70px;
-  z-index:20;
-  display:grid;
-  grid-template-columns:1fr 1fr 1.2fr 1fr 1fr;
-  align-items:center;
-  padding:6px 7px;
-  border:1px solid rgba(241,212,139,.17);
-  border-radius:23px;
-  background:rgba(12,11,9,.91);
-  backdrop-filter:blur(18px);
-  box-shadow:
-    0 15px 40px rgba(0,0,0,.45),
-    0 0 30px rgba(241,212,139,.035);
+    position:fixed;
+    left:50%;
+    bottom:10px;
+    transform:translateX(-50%);
+
+    width:min(
+        492px,
+        calc(100% - 22px)
+    );
+
+    height:67px;
+
+    border:1px solid var(--border);
+    border-radius:23px;
+
+    background:rgba(12,11,9,.91);
+
+    backdrop-filter:blur(18px);
+
+    display:grid;
+    grid-template-columns:1fr 1fr 1fr 1fr 1fr;
+
+    align-items:center;
+
+    box-shadow:
+        0 18px 40px
+        rgba(0,0,0,.45);
+
+    z-index:10;
 }
 
 .nav-item{
-  height:56px;
-  border:0;
-  background:transparent;
-  color:#807967;
-  display:flex;
-  flex-direction:column;
-  align-items:center;
-  justify-content:center;
-  gap:4px;
-  font-size:9px;
-  font-weight:700;
-}
+    border:0;
+    background:none;
+    color:#857d6e;
 
-.nav-item.active{
-  color:var(--gold2);
+    font-size:8px;
+
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+
+    gap:4px;
 }
 
 .nav-item svg{
-  width:19px;
-  height:19px;
-  stroke:currentColor;
-  fill:none;
-  stroke-width:1.6;
+    width:19px;
+    height:19px;
+}
+
+.nav-item.active{
+    color:var(--gold2);
 }
 
 .center-logo{
-  width:53px;
-  height:53px;
-  margin:auto;
-  border-radius:18px;
-  border:1px solid rgba(241,212,139,.32);
-  background:
-    radial-gradient(circle,rgba(255,231,166,.10),rgba(0,0,0,.22));
-  display:grid;
-  place-items:center;
-  box-shadow:
-    0 0 22px rgba(241,212,139,.13),
-    inset 0 0 16px rgba(241,212,139,.035);
+    width:48px;
+    height:48px;
+    border-radius:17px;
+
+    padding:6px;
+
+    background:
+        linear-gradient(
+            145deg,
+            #1c170d,
+            #0d0c09
+        );
+
+    border:1px solid rgba(241,212,139,.38);
+
+    box-shadow:
+        0 0 25px
+        rgba(241,212,139,.25);
+
+    object-fit:contain;
 }
 
-.center-logo img{
-  width:37px;
-  height:37px;
-  object-fit:contain;
-  filter:drop-shadow(0 0 7px rgba(241,212,139,.28));
-}
+/* =========================
+TOAST
+========================= */
 
 .toast{
-  position:fixed;
-  left:50%;
-  bottom:94px;
-  transform:translateX(-50%) translateY(15px);
-  z-index:50;
-  opacity:0;
-  pointer-events:none;
-  padding:11px 15px;
-  border-radius:13px;
-  border:1px solid rgba(241,212,139,.2);
-  background:#14120e;
-  color:var(--gold2);
-  font-size:11px;
-  font-weight:700;
-  transition:.25s;
-  box-shadow:0 12px 30px rgba(0,0,0,.35);
-  white-space:nowrap;
+    position:fixed;
+    left:50%;
+    bottom:88px;
+
+    transform:
+        translateX(-50%)
+        translateY(15px);
+
+    background:#15130f;
+
+    border:1px solid var(--border);
+
+    color:var(--gold2);
+
+    padding:11px 15px;
+
+    border-radius:13px;
+
+    font-size:10px;
+
+    opacity:0;
+    pointer-events:none;
+
+    transition:.25s ease;
+
+    z-index:50;
+
+    box-shadow:
+        0 10px 30px
+        rgba(0,0,0,.4);
 }
 
 .toast.show{
-  opacity:1;
-  transform:translateX(-50%) translateY(0);
+    opacity:1;
+    transform:
+        translateX(-50%)
+        translateY(0);
 }
 
+/* =========================
+RESPONSIVE
+========================= */
+
 @media(max-width:360px){
-  .brand-sub{
-    font-size:8px;
-    letter-spacing:1px;
-  }
 
-  .brand-logo{
-    width:50px;
-    height:50px;
-  }
+    .balance{
+        font-size:27px;
+    }
 
-  .balance{
-    font-size:30px;
-  }
+    .quick{
+        gap:5px;
+    }
 
-  .result-value{
-    font-size:16px;
-  }
+    .quick-item{
+        padding:11px 5px;
+    }
 
-  .bottom-nav{
-    width:calc(100% - 14px);
-  }
+    .brand-name{
+        font-size:14px;
+    }
+
+    .chart{
+        gap:4px;
+    }
 }
 </style>
 </head>
 
 <body>
 
-<div class="glow-orb"></div>
-
 <div class="app">
 
+<!-- =========================
+HEADER
+========================= -->
+
 <header>
-  <div class="brand">
-    <img src="logo.png" class="brand-logo" alt="Nexora AI Logo">
-    <div class="brand-text">
-      <div class="brand-name">NEXORA AI</div>
-      <div class="brand-sub">AI AUTO PAY ECOSYSTEM</div>
-    </div>
-  </div>
 
-  <div class="header-actions">
-    <button class="icon-btn" onclick="toast('Notifications coming soon')" aria-label="Notifications">
-      <svg viewBox="0 0 24 24">
-        <path d="M18 8a6 6 0 0 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9"/>
-        <path d="M10 21h4"/>
-      </svg>
-    </button>
+    <div class="brand">
 
-    <button class="icon-btn" onclick="openPage('profile')" aria-label="Profile">
-      <svg viewBox="0 0 24 24">
-        <circle cx="12" cy="8" r="3.5"/>
-        <path d="M5 20c.8-4 3-6 7-6s6.2 2 7 6"/>
-      </svg>
-    </button>
-  </div>
-</header>
-
-<!-- HOME -->
-
-<section id="home" class="page active">
-
-  <div class="hero">
-    <div class="eyebrow">Total Balance</div>
-
-    <div class="balance">
-      1,250.00 <span class="currency">USDT</span>
-    </div>
-
-    <div class="balance-row">
-      <div class="change">+12.48% this month</div>
-      <div class="available">
-        Available <strong>$840.00</strong>
-      </div>
-    </div>
-
-    <div class="action-row">
-      <button class="action-btn primary" onclick="openPage('deposit')">
-        <svg viewBox="0 0 24 24">
-          <path d="M12 4v16"/>
-          <path d="m6 10 6-6 6 6"/>
-        </svg>
-        Deposit
-      </button>
-
-      <button class="action-btn" onclick="openPage('withdraw')">
-        <svg viewBox="0 0 24 24">
-          <path d="M12 20V4"/>
-          <path d="m6 14 6 6 6-6"/>
-        </svg>
-        Withdraw
-      </button>
-    </div>
-  </div>
-
-  <div class="section-title">
-    <h2>Live Mining Income</h2>
-    <span>Real-time demo</span>
-  </div>
-
-  <div class="mining-card">
-    <div class="mining-top">
-      <div class="live">
-        <span class="live-dot"></span>
-        LIVE MINING
-      </div>
-      <span class="eyebrow">AUTO</span>
-    </div>
-
-    <div class="mining-value" id="miningValue">+0.000024 USDT</div>
-    <div class="mining-rate">Accumulated income per second</div>
-
-    <div class="progress">
-      <span></span>
-    </div>
-
-    <button class="claim-btn" onclick="claim()">
-      Claim Earnings
-    </button>
-  </div>
-
-  <div class="section-title">
-    <h2>Quick Access</h2>
-    <span>Explore</span>
-  </div>
-
-  <div class="quick-grid">
-
-    <button class="quick-card" onclick="openPage('earn')">
-      <div class="quick-icon">
-        <svg viewBox="0 0 24 24">
-          <path d="M4 19V5"/>
-          <path d="M4 19h16"/>
-          <path d="m7 15 4-4 3 2 5-6"/>
-        </svg>
-      </div>
-      <div class="quick-title">Earning USDT</div>
-      <div class="quick-desc">Track your earnings</div>
-    </button>
-
-    <button class="quick-card" onclick="openPage('nft')">
-      <div class="quick-icon">
-        <svg viewBox="0 0 24 24">
-          <path d="m12 3 8 4.5v9L12 21l-8-4.5v-9L12 3Z"/>
-          <path d="m4 7.5 8 4.5 8-4.5"/>
-          <path d="M12 12v9"/>
-        </svg>
-      </div>
-      <div class="quick-title">NFT Collection</div>
-      <div class="quick-desc">Your digital assets</div>
-    </button>
-
-    <button class="quick-card" onclick="openPage('friends')">
-      <div class="quick-icon">
-        <svg viewBox="0 0 24 24">
-          <circle cx="9" cy="8" r="3"/>
-          <circle cx="17" cy="10" r="2.5"/>
-          <path d="M3 20c.5-4 2.5-6 6-6s5.5 2 6 6"/>
-          <path d="M14 15c2.8-.2 5 1.3 5.5 5"/>
-        </svg>
-      </div>
-      <div class="quick-title">Referral</div>
-      <div class="quick-desc">Invite & earn</div>
-    </button>
-
-    <button class="quick-card" onclick="openPage('stats')">
-      <div class="quick-icon">
-        <svg viewBox="0 0 24 24">
-          <path d="M5 20V10"/>
-          <path d="M12 20V4"/>
-          <path d="M19 20v-7"/>
-        </svg>
-      </div>
-      <div class="quick-title">Stats</div>
-      <div class="quick-desc">Performance overview</div>
-    </button>
-
-  </div>
-
-  <!-- PASSIVE INCOME CALCULATOR -->
-
-  <div class="section-title">
-    <h2>Passive Income Calculator</h2>
-    <span>Estimate</span>
-  </div>
-
-  <div class="calculator">
-
-    <div class="calculator-head">
-      <div class="calc-title-wrap">
-
-        <div class="calc-icon">
-          <svg viewBox="0 0 24 24">
-            <rect x="5" y="3" width="14" height="18" rx="2"/>
-            <path d="M8 7h8"/>
-            <path d="M8 11h2"/>
-            <path d="M14 11h2"/>
-            <path d="M8 15h2"/>
-            <path d="M14 15h2"/>
-            <path d="M8 18h8"/>
-          </svg>
-        </div>
+        <img
+            src="logo.png"
+            class="brand-logo"
+            alt="Nexora AI"
+        >
 
         <div>
-          <div class="calc-title">Income Calculator</div>
-          <div class="calc-sub">Enter your capital & rates</div>
+
+            <div class="brand-name">
+                NEXORA AI
+            </div>
+
+            <div class="brand-sub">
+                AI AUTO PAY ECOSYSTEM
+            </div>
+
         </div>
 
-      </div>
-
-      <div class="calc-badge">USDT</div>
     </div>
 
-    <div class="field">
-      <label for="capital">Investment / Capital</label>
+    <div class="head-actions">
 
-      <div class="input-wrap">
-        <input
-          id="capit
+        <button
+            class="icon-btn"
+            onclick="toast('Notifications are currently in demo mode')"
+        >
+
+            <svg viewBox="0 0 24 24" fill="none"
+                 stroke="currentColor"
+                 stroke-width="1.7">
+
+                <path d="M18 8a6 6 0 0 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9"/>
+                <path d="M10 21h4"/>
+
+            </svg>
+
+        </button>
+
+        <button
+            class="icon-btn"
+            onclick="openPage('profile')"
+        >
+
+            <svg viewBox="0 0 24 24" fill="none"
+                 stroke="currentColor"
+                 stroke-width="1.7">
+
+                <circle cx="12" cy="8" r="3.5"/>
+                <path d="M5 20c.8-3.5 3.2-5.3 7-5.3s6.2 1.8 7 5.3"/>
+
+            </svg>
+
+        </button>
+
+    </div>
+
+</header>
+
+
+<!-- =====================================================
+HOME
+===================================================== -->
+
+<section
+    class="page active"
+    id="home"
+>
+
+    <div class="hero">
+
+        <div class="eyebrow">
+            TOTAL PORTFOLIO
+        </div>
+
+        <div class="balance">
+            $1,250.00
+            <span>USDT</span>
+        </div>
+
+        <div class="change">
+            +12.48% this month
+        </div>
+
+        <div class="mini-row">
+
+            <div>
+                <div class="mini-label">
+                    Available Balance
+                </div>
+
+                <div class="mini-value">
+                    $840.00
+                </div>
+            </div>
+
+            <div style="text-align:right">
+
+                <div class="mini-label">
+                    Auto Pay
+                </div>
+
+                <div class="mini-value">
+                    Active
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <div class="actions">
+
+        <button
+            class="btn"
+            onclick="openPage('deposit')"
+        >
+            Deposit
+        </button>
+
+        <button
+            class="btn secondary"
+            onclick="openPage('withdraw')"
+        >
+            Withdraw
+        </button>
+
+    </div>
+
+
+    <!-- LIVE MINING -->
+
+    <div class="section-title">
+
+        <h2>
+            Live Mining Income
+        </h2>
+
+        <small>
+            Real-time UI
+        </small>
+
+    </div>
+
+    <div class="card">
+
+        <div class="live-head">
+
+            <div class="live">
+
+                <span class="dot"></span>
+
+                LIVE
+
+            </div>
+
+            <small class="rate">
+                Dynamic earning
+            </small>
+
+        </div>
+
+
+        <!-- STEP 1 LIVE NUMBER -->
+
+        <div
+            class="mining-number"
+            id="miningAmount"
+        >
+            +0.000024 USDT
+        </div>
+
+        <div class="rate">
+            Estimated live earning animation
+        </div>
+
+
+        <div class="progress">
+            <span></span>
+        </div>
+
+
+        <button
+            class="claim"
+            onclick="claim()"
+        >
+            Claim Earnings
+        </button>
+
+    </div>
+
+
+    <!-- QUICK ACCESS -->
+
+    <div class="section-title">
+
+        <h2>
+            Quick Access
+        </h2>
+
+        <small>
+            Explore
+        </small>
+
+    </div>
+
+    <div class="quick">
+
+        <button
+            class="quick-item"
+            onclick="openPage('earn')"
+        >
+
+            <div class="qicon">
+
+                <svg viewBox="0 0 24 24" fill="none"
+                     stroke="currentColor"
+                     stroke-width="1.7">
+
+                    <path d="M12 3v18"/>
+                    <path d="M17 7.5c0-2-2-3.5-5-3.5S7 5.5 7 7.5 9 11 12 11s5 1.5 5 3.5-2 3.5-5 3.5-5-1.5-5-3.5"/>
+
+                </svg>
+
+            </div>
+
+            <b>Earn</b>
+            <span>USDT</span>
+
+        </button>
+
+
+        <button
+            class="quick-item"
+            onclick="openPage('nft')"
+        >
+
+            <div class="qicon">
+
+                <svg viewBox="0 0 24 24" fill="none"
+                     stroke="currentColor"
+                     stroke-width="1.7">
+
+                    <rect x="4" y="4" width="16" height="16" rx="3"/>
+                    <path d="m7 16 3.2-4 2.5 3 1.8-2.2L17 16"/>
+                    <circle cx="9" cy="9" r="1"/>
+
+                </svg>
+
+            </div>
+
+            <b>NFT</b>
+            <span
