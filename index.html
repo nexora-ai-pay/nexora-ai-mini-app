@@ -1,869 +1,1170 @@
-```html
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-  <meta name="theme-color" content="#070912" />
-  <title>Nexora AI</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="theme-color" content="#05050b">
+<title>Nexora AI</title>
 
-  <!-- Telegram Mini App -->
-  <script src="https://telegram.org/js/telegram-web-app.js"></script>
+<script src="https://telegram.org/js/telegram-web-app.js"></script>
 
-  <style>
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-      -webkit-tap-highlight-color: transparent;
+<style>
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+    -webkit-tap-highlight-color:transparent;
+}
+
+:root{
+    --bg:#05050b;
+    --bg2:#090a14;
+    --purple:#7b4dff;
+    --purple2:#9b6cff;
+    --blue:#21c8ff;
+    --cyan:#00e5ff;
+    --white:#ffffff;
+    --muted:#858ba8;
+    --green:#35e6a1;
+    --glass:rgba(255,255,255,.055);
+    --border:rgba(255,255,255,.09);
+}
+
+html{
+    background:#05050b;
+}
+
+body{
+    min-height:100vh;
+    color:var(--white);
+    font-family:
+        Inter,
+        -apple-system,
+        BlinkMacSystemFont,
+        "Segoe UI",
+        sans-serif;
+    background:
+        radial-gradient(circle at 10% 5%,rgba(123,77,255,.18),transparent 28%),
+        radial-gradient(circle at 95% 12%,rgba(0,229,255,.10),transparent 25%),
+        radial-gradient(circle at 50% 75%,rgba(123,77,255,.07),transparent 32%),
+        linear-gradient(180deg,#05050b 0%,#070812 45%,#04050b 100%);
+    overflow-x:hidden;
+}
+
+/* =========================
+   PREMIUM BACKGROUND
+========================= */
+
+.bg-glow{
+    position:fixed;
+    width:280px;
+    height:280px;
+    border-radius:50%;
+    filter:blur(85px);
+    opacity:.18;
+    pointer-events:none;
+    z-index:0;
+}
+
+.glow1{
+    top:-120px;
+    left:-100px;
+    background:#754cff;
+}
+
+.glow2{
+    top:240px;
+    right:-150px;
+    background:#00d9ff;
+}
+
+.glow3{
+    bottom:80px;
+    left:-140px;
+    background:#8c50ff;
+}
+
+.app{
+    position:relative;
+    z-index:2;
+    width:100%;
+    max-width:520px;
+    min-height:100vh;
+    margin:auto;
+    padding-bottom:115px;
+}
+
+/* =========================
+   LOGO WATERMARK
+========================= */
+
+.brand-watermark{
+    position:fixed;
+    z-index:0;
+    top:50%;
+    left:50%;
+    transform:translate(-50%,-50%);
+    width:330px;
+    height:330px;
+    opacity:.035;
+    pointer-events:none;
+    filter:blur(.2px);
+}
+
+.brand-watermark img{
+    width:100%;
+    height:100%;
+    object-fit:contain;
+}
+
+/* =========================
+   TOP HEADER
+========================= */
+
+.topbar{
+    position:relative;
+    padding:22px 18px 10px;
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+}
+
+.brand{
+    display:flex;
+    align-items:center;
+    gap:12px;
+}
+
+.logo-wrap{
+    position:relative;
+    width:48px;
+    height:48px;
+}
+
+.logo-wrap::before{
+    content:"";
+    position:absolute;
+    inset:-5px;
+    border-radius:17px;
+    background:linear-gradient(135deg,#7c4dff,#00d9ff);
+    filter:blur(12px);
+    opacity:.35;
+}
+
+.logo{
+    position:relative;
+    width:48px;
+    height:48px;
+    border-radius:16px;
+    object-fit:cover;
+    border:1px solid rgba(255,255,255,.13);
+    box-shadow:
+        0 0 30px rgba(123,77,255,.28),
+        inset 0 0 15px rgba(255,255,255,.08);
+}
+
+.brand-title{
+    font-size:20px;
+    font-weight:850;
+    letter-spacing:-.6px;
+}
+
+.brand-subtitle{
+    margin-top:3px;
+    color:#858ba8;
+    font-size:10px;
+    letter-spacing:.15px;
+}
+
+.notification{
+    width:45px;
+    height:45px;
+    border-radius:15px;
+    border:1px solid var(--border);
+    background:rgba(255,255,255,.055);
+    color:white;
+    font-size:19px;
+    backdrop-filter:blur(20px);
+    box-shadow:inset 0 1px rgba(255,255,255,.05);
+}
+
+/* =========================
+   PROFILE
+========================= */
+
+.profile{
+    position:relative;
+    margin:17px 18px;
+    padding:15px;
+    display:flex;
+    align-items:center;
+    gap:13px;
+    border-radius:23px;
+    background:
+        linear-gradient(135deg,
+        rgba(255,255,255,.075),
+        rgba(255,255,255,.025));
+    border:1px solid rgba(255,255,255,.09);
+    box-shadow:
+        0 20px 45px rgba(0,0,0,.20),
+        inset 0 1px rgba(255,255,255,.055);
+    backdrop-filter:blur(22px);
+}
+
+.avatar{
+    width:51px;
+    height:51px;
+    border-radius:17px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    overflow:hidden;
+    background:linear-gradient(135deg,#7c4dff,#00cfff);
+    font-size:21px;
+    font-weight:850;
+    box-shadow:0 0 24px rgba(80,100,255,.25);
+}
+
+.avatar img{
+    width:100%;
+    height:100%;
+    object-fit:cover;
+}
+
+.profile-info{
+    flex:1;
+}
+
+.welcome{
+    color:#777e9e;
+    font-size:10px;
+    text-transform:uppercase;
+    letter-spacing:1px;
+}
+
+.username{
+    margin-top:3px;
+    font-size:17px;
+    font-weight:800;
+}
+
+.verified{
+    color:#00d8ff;
+    font-size:14px;
+    margin-left:3px;
+}
+
+.level{
+    margin-top:4px;
+    color:#9c8aff;
+    font-size:10px;
+}
+
+.settings{
+    width:42px;
+    height:42px;
+    border-radius:14px;
+    background:rgba(255,255,255,.055);
+    border:1px solid rgba(255,255,255,.07);
+    color:white;
+    font-size:18px;
+}
+
+/* =========================
+   HERO BALANCE
+========================= */
+
+.balance-card{
+    position:relative;
+    overflow:hidden;
+    margin:19px 18px;
+    padding:24px;
+    min-height:235px;
+    border-radius:31px;
+
+    background:
+        radial-gradient(circle at 95% 0%,
+        rgba(255,255,255,.18),
+        transparent 30%),
+        radial-gradient(circle at 5% 100%,
+        rgba(0,229,255,.17),
+        transparent 30%),
+        linear-gradient(135deg,
+        #6540e8 0%,
+        #4323a7 48%,
+        #26166c 100%);
+
+    border:1px solid rgba(255,255,255,.15);
+
+    box-shadow:
+        0 25px 65px rgba(75,43,190,.30),
+        inset 0 1px rgba(255,255,255,.16);
+}
+
+.balance-card::before{
+    content:"";
+    position:absolute;
+    width:240px;
+    height:240px;
+    right:-100px;
+    top:-115px;
+    border-radius:50%;
+    border:1px solid rgba(255,255,255,.12);
+    box-shadow:
+        0 0 0 35px rgba(255,255,255,.025),
+        0 0 0 70px rgba(255,255,255,.018);
+}
+
+.balance-card::after{
+    content:"N";
+    position:absolute;
+    right:24px;
+    bottom:-30px;
+    font-size:150px;
+    line-height:1;
+    font-weight:900;
+    color:rgba(255,255,255,.035);
+}
+
+.balance-label{
+    color:rgba(255,255,255,.66);
+    font-size:11px;
+    letter-spacing:.4px;
+}
+
+.balance{
+    position:relative;
+    z-index:2;
+    margin-top:6px;
+    font-size:42px;
+    font-weight:900;
+    letter-spacing:-2px;
+}
+
+.coin{
+    font-size:13px;
+    font-weight:700;
+    letter-spacing:0;
+    opacity:.8;
+}
+
+.balance-change{
+    margin-top:5px;
+    color:#bffff0;
+    font-size:11px;
+}
+
+.balance-bottom{
+    position:absolute;
+    left:24px;
+    right:24px;
+    bottom:23px;
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+}
+
+.available{
+    color:rgba(255,255,255,.65);
+    font-size:10px;
+}
+
+.claim{
+    padding:13px 20px;
+    border-radius:15px;
+    background:#ffffff;
+    color:#4b2eb3;
+    font-size:13px;
+    font-weight:850;
+    box-shadow:
+        0 10px 25px rgba(0,0,0,.22),
+        inset 0 -2px rgba(0,0,0,.06);
+}
+
+/* =========================
+   SECTION HEADER
+========================= */
+
+.section-head{
+    margin:25px 18px 13px;
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+}
+
+.section-head h2{
+    font-size:17px;
+    font-weight:800;
+    letter-spacing:-.3px;
+}
+
+.section-head span{
+    color:#686f8d;
+    font-size:10px;
+}
+
+/* =========================
+   STATS
+========================= */
+
+.stats{
+    display:grid;
+    grid-template-columns:repeat(2,1fr);
+    gap:11px;
+    padding:0 18px;
+}
+
+.stat{
+    position:relative;
+    min-height:126px;
+    padding:17px;
+    overflow:hidden;
+    border-radius:21px;
+    background:
+        linear-gradient(145deg,
+        rgba(255,255,255,.065),
+        rgba(255,255,255,.025));
+    border:1px solid rgba(255,255,255,.08);
+    box-shadow:
+        0 14px 35px rgba(0,0,0,.18),
+        inset 0 1px rgba(255,255,255,.04);
+    backdrop-filter:blur(20px);
+}
+
+.stat::after{
+    content:"";
+    position:absolute;
+    width:80px;
+    height:80px;
+    right:-45px;
+    bottom:-45px;
+    border-radius:50%;
+    background:rgba(123,77,255,.10);
+}
+
+.stat-icon{
+    width:36px;
+    height:36px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    border-radius:12px;
+    background:rgba(123,77,255,.12);
+    font-size:17px;
+}
+
+.stat-value{
+    margin-top:12px;
+    font-size:20px;
+    font-weight:850;
+}
+
+.stat-label{
+    margin-top:3px;
+    color:#777e9d;
+    font-size:10px;
+}
+
+/* =========================
+   DAILY REWARD
+========================= */
+
+.reward{
+    position:relative;
+    margin:18px;
+    padding:19px;
+    display:flex;
+    align-items:center;
+    gap:14px;
+    border-radius:23px;
+    overflow:hidden;
+
+    background:
+        linear-gradient(135deg,
+        rgba(123,77,255,.13),
+        rgba(0,210,255,.055));
+
+    border:1px solid rgba(123,77,255,.18);
+}
+
+.reward-icon{
+    width:50px;
+    height:50px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    border-radius:17px;
+    background:linear-gradient(135deg,
+        rgba(255,255,255,.10),
+        rgba(255,255,255,.035));
+    font-size:23px;
+}
+
+.reward-info{
+    flex:1;
+}
+
+.reward-title{
+    font-size:14px;
+    font-weight:800;
+}
+
+.reward-text{
+    margin-top:4px;
+    color:#737b99;
+    font-size:9px;
+    line-height:1.4;
+}
+
+.reward-btn{
+    padding:10px 13px;
+    border-radius:12px;
+    color:white;
+    background:linear-gradient(135deg,#7950ff,#26caff);
+    font-size:10px;
+    font-weight:800;
+}
+
+/* =========================
+   EARNING PROGRESS
+========================= */
+
+.earning{
+    margin:0 18px;
+    padding:19px;
+    border-radius:23px;
+    background:rgba(255,255,255,.045);
+    border:1px solid rgba(255,255,255,.08);
+}
+
+.earning-top{
+    display:flex;
+    justify-content:space-between;
+}
+
+.earning-title{
+    font-size:13px;
+    font-weight:750;
+}
+
+.earning-value{
+    color:#38e4a2;
+    font-size:11px;
+    font-weight:750;
+}
+
+.progress{
+    height:7px;
+    margin-top:16px;
+    overflow:hidden;
+    border-radius:20px;
+    background:rgba(255,255,255,.065);
+}
+
+.progress-bar{
+    width:68%;
+    height:100%;
+    border-radius:inherit;
+    background:linear-gradient(90deg,#7950ff,#00dfff);
+    box-shadow:0 0 16px rgba(0,217,255,.4);
+}
+
+.progress-bottom{
+    display:flex;
+    justify-content:space-between;
+    margin-top:8px;
+    color:#676e8c;
+    font-size:9px;
+}
+
+/* =========================
+   REFERRAL
+========================= */
+
+.referral{
+    margin:18px;
+    padding:21px;
+    border-radius:25px;
+    background:
+        linear-gradient(135deg,
+        rgba(255,255,255,.06),
+        rgba(255,255,255,.025));
+    border:1px solid rgba(255,255,255,.08);
+}
+
+.ref-title{
+    font-size:16px;
+    font-weight:850;
+}
+
+.ref-description{
+    margin-top:5px;
+    color:#737b99;
+    font-size:10px;
+    line-height:1.5;
+}
+
+.ref-link-row{
+    display:flex;
+    gap:8px;
+    margin-top:15px;
+}
+
+.ref-link{
+    flex:1;
+    min-width:0;
+    padding:12px;
+    border-radius:13px;
+    background:rgba(0,0,0,.20);
+    border:1px solid rgba(255,255,255,.06);
+    color:#9aa1bd;
+    font-size:9px;
+    white-space:nowrap;
+    overflow:hidden;
+    text-overflow:ellipsis;
+}
+
+.copy{
+    width:43px;
+    border-radius:13px;
+    background:rgba(123,77,255,.16);
+    border:1px solid rgba(123,77,255,.12);
+    color:white;
+    font-size:17px;
+}
+
+/* =========================
+   LEADERBOARD
+========================= */
+
+.leaderboard{
+    margin:0 18px;
+    padding:18px;
+    border-radius:23px;
+    background:rgba(255,255,255,.045);
+    border:1px solid rgba(255,255,255,.075);
+}
+
+.rank-row{
+    display:flex;
+    align-items:center;
+    gap:11px;
+    padding:10px 0;
+    border-bottom:1px solid rgba(255,255,255,.045);
+}
+
+.rank-row:last-child{
+    border-bottom:0;
+}
+
+.rank{
+    width:28px;
+    font-size:12px;
+    color:#777e9a;
+    text-align:center;
+}
+
+.rank-avatar{
+    width:34px;
+    height:34px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    border-radius:11px;
+    background:linear-gradient(135deg,#382479,#12657a);
+    font-size:13px;
+}
+
+.rank-name{
+    flex:1;
+    font-size:11px;
+    font-weight:700;
+}
+
+.rank-amount{
+    color:#9d8aff;
+    font-size:10px;
+    font-weight:750;
+}
+
+/* =========================
+   BOTTOM NAV
+========================= */
+
+.bottom-nav{
+    position:fixed;
+    z-index:100;
+    left:50%;
+    bottom:12px;
+    transform:translateX(-50%);
+    width:calc(100% - 24px);
+    max-width:496px;
+
+    padding:8px;
+
+    display:grid;
+    grid-template-columns:repeat(4,1fr);
+
+    border-radius:24px;
+
+    background:rgba(8,9,18,.88);
+    border:1px solid rgba(255,255,255,.10);
+
+    backdrop-filter:blur(25px);
+
+    box-shadow:
+        0 20px 60px rgba(0,0,0,.42),
+        inset 0 1px rgba(255,255,255,.05);
+}
+
+.nav-btn{
+    padding:9px 4px;
+    border:0;
+    border-radius:17px;
+    color:#646b88;
+    background:transparent;
+    font-size:18px;
+}
+
+.nav-btn span{
+    display:block;
+    margin-top:3px;
+    font-size:9px;
+}
+
+.nav-btn.active{
+    color:white;
+    background:
+        linear-gradient(135deg,
+        rgba(123,77,255,.28),
+        rgba(0,214,255,.10));
+    box-shadow:inset 0 1px rgba(255,255,255,.06);
+}
+
+/* =========================
+   TOAST
+========================= */
+
+.toast{
+    position:fixed;
+    z-index:200;
+    left:50%;
+    bottom:94px;
+    transform:translate(-50%,20px);
+    padding:12px 17px;
+    border-radius:14px;
+    background:rgba(16,18,31,.96);
+    border:1px solid rgba(255,255,255,.10);
+    color:white;
+    font-size:11px;
+    opacity:0;
+    pointer-events:none;
+    transition:.3s ease;
+    box-shadow:0 15px 40px rgba(0,0,0,.35);
+}
+
+.toast.show{
+    opacity:1;
+    transform:translate(-50%,0);
+}
+
+/* =========================
+   ANIMATIONS
+========================= */
+
+@keyframes floatLogo{
+    0%,100%{
+        transform:translate(-50%,-50%) scale(1);
+    }
+    50%{
+        transform:translate(-50%,-52%) scale(1.04);
+    }
+}
+
+.brand-watermark{
+    animation:floatLogo 7s ease-in-out infinite;
+}
+
+@keyframes shine{
+    0%{
+        transform:translateX(-120%);
+    }
+    50%,100%{
+        transform:translateX(120%);
+    }
+}
+
+.balance-card{
+    isolation:isolate;
+}
+
+.balance-card .shine{
+    position:absolute;
+    z-index:5;
+    top:0;
+    left:0;
+    width:45%;
+    height:100%;
+    background:linear-gradient(
+        90deg,
+        transparent,
+        rgba(255,255,255,.10),
+        transparent
+    );
+    transform:translateX(-120%);
+    animation:shine 6s infinite;
+}
+
+/* =========================
+   DESKTOP
+========================= */
+
+@media(min-width:600px){
+
+    body{
+        padding:20px 0;
     }
 
-    :root {
-      --bg: #060812;
-      --card: rgba(18, 23, 42, 0.72);
-      --card-border: rgba(255,255,255,0.08);
-      --text: #f7f8ff;
-      --muted: #8e96b5;
-      --primary: #7c5cff;
-      --secondary: #00d9ff;
-      --success: #2de38a;
-      --danger: #ff5577;
+    .app{
+        border-radius:30px;
+        overflow:hidden;
+        background:rgba(4,5,12,.35);
+        box-shadow:0 30px 100px rgba(0,0,0,.45);
     }
 
-    body {
-      font-family: Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-      background:
-        radial-gradient(circle at 15% 5%, rgba(124,92,255,.22), transparent 28%),
-        radial-gradient(circle at 90% 15%, rgba(0,217,255,.13), transparent 25%),
-        var(--bg);
-      color: var(--text);
-      min-height: 100vh;
-      overflow-x: hidden;
+    .bottom-nav{
+        bottom:24px;
     }
-
-    button {
-      font: inherit;
-      border: 0;
-      cursor: pointer;
-    }
-
-    .app {
-      width: 100%;
-      max-width: 520px;
-      margin: auto;
-      min-height: 100vh;
-      padding-bottom: 100px;
-    }
-
-    /* TOP BAR */
-
-    .topbar {
-      padding: 20px 18px 8px;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-    }
-
-    .brand {
-      display: flex;
-      align-items: center;
-      gap: 11px;
-    }
-
-    .brand img {
-      width: 45px;
-      height: 45px;
-      border-radius: 14px;
-      object-fit: cover;
-      box-shadow: 0 0 25px rgba(124,92,255,.35);
-    }
-
-    .brand-name {
-      font-size: 19px;
-      font-weight: 800;
-      letter-spacing: -.4px;
-    }
-
-    .brand-sub {
-      font-size: 11px;
-      color: var(--muted);
-      margin-top: 2px;
-    }
-
-    .icon-btn {
-      width: 42px;
-      height: 42px;
-      border-radius: 14px;
-      color: white;
-      background: rgba(255,255,255,.06);
-      border: 1px solid rgba(255,255,255,.08);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 19px;
-    }
-
-    /* PROFILE */
-
-    .profile {
-      margin: 18px;
-      padding: 15px;
-      border: 1px solid var(--card-border);
-      background: linear-gradient(135deg, rgba(255,255,255,.07), rgba(255,255,255,.025));
-      backdrop-filter: blur(18px);
-      border-radius: 22px;
-      display: flex;
-      align-items: center;
-      gap: 13px;
-    }
-
-    .avatar {
-      width: 48px;
-      height: 48px;
-      border-radius: 16px;
-      background: linear-gradient(135deg, var(--primary), var(--secondary));
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 20px;
-      font-weight: 800;
-      overflow: hidden;
-    }
-
-    .avatar img {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-    }
-
-    .profile-info {
-      flex: 1;
-    }
-
-    .welcome {
-      font-size: 12px;
-      color: var(--muted);
-    }
-
-    .username {
-      font-size: 17px;
-      font-weight: 750;
-      margin-top: 2px;
-    }
-
-    .verified {
-      display: inline-flex;
-      margin-left: 5px;
-      color: #00cfff;
-      font-size: 13px;
-    }
-
-    .level {
-      font-size: 11px;
-      color: #a89cff;
-      margin-top: 3px;
-    }
-
-    /* BALANCE */
-
-    .balance-card {
-      margin: 18px;
-      padding: 23px;
-      border-radius: 28px;
-      position: relative;
-      overflow: hidden;
-      background:
-        linear-gradient(135deg, rgba(124,92,255,.95), rgba(57,42,154,.88));
-      box-shadow: 0 20px 60px rgba(79,58,220,.25);
-    }
-
-    .balance-card::before {
-      content: "";
-      position: absolute;
-      width: 190px;
-      height: 190px;
-      right: -70px;
-      top: -80px;
-      border-radius: 50%;
-      background: rgba(255,255,255,.11);
-    }
-
-    .balance-card::after {
-      content: "";
-      position: absolute;
-      width: 130px;
-      height: 130px;
-      left: -65px;
-      bottom: -75px;
-      border-radius: 50%;
-      background: rgba(0,217,255,.12);
-    }
-
-    .balance-label {
-      color: rgba(255,255,255,.72);
-      font-size: 12px;
-    }
-
-    .balance {
-      font-size: 37px;
-      font-weight: 850;
-      letter-spacing: -1.5px;
-      margin: 6px 0 4px;
-    }
-
-    .coin {
-      font-size: 14px;
-      font-weight: 650;
-      opacity: .85;
-    }
-
-    .balance-bottom {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-top: 19px;
-    }
-
-    .profit {
-      font-size: 12px;
-      color: #bfffe0;
-    }
-
-    .claim-btn {
-      padding: 11px 18px;
-      border-radius: 13px;
-      background: white;
-      color: #4b36bc;
-      font-weight: 800;
-      box-shadow: 0 8px 25px rgba(0,0,0,.18);
-    }
-
-    /* QUICK STATS */
-
-    .section-title {
-      padding: 0 18px;
-      margin: 23px 0 12px;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-    }
-
-    .section-title h2 {
-      font-size: 17px;
-    }
-
-    .section-title span {
-      color: var(--muted);
-      font-size: 11px;
-    }
-
-    .stats {
-      display: grid;
-      grid-template-columns: repeat(2, 1fr);
-      gap: 11px;
-      padding: 0 18px;
-    }
-
-    .stat {
-      padding: 17px;
-      border-radius: 20px;
-      background: var(--card);
-      border: 1px solid var(--card-border);
-      backdrop-filter: blur(15px);
-    }
-
-    .stat-icon {
-      width: 35px;
-      height: 35px;
-      border-radius: 11px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      background: rgba(124,92,255,.13);
-      margin-bottom: 11px;
-    }
-
-    .stat-value {
-      font-size: 19px;
-      font-weight: 800;
-    }
-
-    .stat-label {
-      color: var(--muted);
-      font-size: 11px;
-      margin-top: 4px;
-    }
-
-    /* DAILY BONUS */
-
-    .bonus {
-      margin: 18px;
-      padding: 18px;
-      border-radius: 22px;
-      border: 1px solid rgba(0,217,255,.14);
-      background:
-        linear-gradient(135deg, rgba(0,217,255,.08), rgba(124,92,255,.08));
-      display: flex;
-      align-items: center;
-      gap: 13px;
-    }
-
-    .bonus-icon {
-      width: 48px;
-      height: 48px;
-      border-radius: 16px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      background: rgba(255,255,255,.07);
-      font-size: 22px;
-    }
-
-    .bonus-info {
-      flex: 1;
-    }
-
-    .bonus-title {
-      font-size: 14px;
-      font-weight: 750;
-    }
-
-    .bonus-text {
-      color: var(--muted);
-      font-size: 10px;
-      margin-top: 3px;
-    }
-
-    .bonus-btn {
-      padding: 10px 13px;
-      border-radius: 12px;
-      color: white;
-      background: linear-gradient(135deg, #00c9e8, #6275ff);
-      font-size: 11px;
-      font-weight: 800;
-    }
-
-    /* EARNING */
-
-    .earning-card {
-      margin: 0 18px;
-      padding: 19px;
-      border-radius: 23px;
-      background: var(--card);
-      border: 1px solid var(--card-border);
-    }
-
-    .earning-head {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-    }
-
-    .earning-head strong {
-      font-size: 14px;
-    }
-
-    .earning-percent {
-      font-size: 12px;
-      color: var(--success);
-      font-weight: 700;
-    }
-
-    .progress {
-      height: 8px;
-      margin-top: 17px;
-      border-radius: 20px;
-      background: rgba(255,255,255,.07);
-      overflow: hidden;
-    }
-
-    .progress-bar {
-      height: 100%;
-      width: 68%;
-      border-radius: inherit;
-      background: linear-gradient(90deg, var(--primary), var(--secondary));
-      box-shadow: 0 0 15px rgba(0,217,255,.35);
-    }
-
-    .earning-footer {
-      display: flex;
-      justify-content: space-between;
-      color: var(--muted);
-      font-size: 10px;
-      margin-top: 8px;
-    }
-
-    /* REFERRAL */
-
-    .referral {
-      margin: 18px;
-      padding: 20px;
-      border-radius: 24px;
-      background: linear-gradient(135deg, rgba(255,255,255,.06), rgba(255,255,255,.025));
-      border: 1px solid var(--card-border);
-    }
-
-    .ref-title {
-      font-size: 16px;
-      font-weight: 800;
-    }
-
-    .ref-desc {
-      font-size: 11px;
-      color: var(--muted);
-      margin-top: 5px;
-      line-height: 1.5;
-    }
-
-    .ref-box {
-      margin-top: 15px;
-      display: flex;
-      align-items: center;
-      gap: 8px;
-    }
-
-    .ref-link {
-      flex: 1;
-      background: rgba(0,0,0,.18);
-      border: 1px solid rgba(255,255,255,.06);
-      padding: 12px;
-      border-radius: 13px;
-      font-size: 10px;
-      color: #bfc5e0;
-      overflow: hidden;
-      white-space: nowrap;
-      text-overflow: ellipsis;
-    }
-
-    .copy-btn {
-      width: 43px;
-      height: 43px;
-      border-radius: 13px;
-      background: rgba(124,92,255,.18);
-      color: white;
-    }
-
-    /* NAV */
-
-    .bottom-nav {
-      position: fixed;
-      z-index: 100;
-      bottom: 12px;
-      left: 50%;
-      transform: translateX(-50%);
-      width: calc(100% - 24px);
-      max-width: 496px;
-      padding: 9px;
-      border-radius: 23px;
-      background: rgba(12,15,28,.88);
-      border: 1px solid rgba(255,255,255,.09);
-      backdrop-filter: blur(22px);
-      display: grid;
-      grid-template-columns: repeat(4, 1fr);
-      box-shadow: 0 15px 45px rgba(0,0,0,.35);
-    }
-
-    .nav-btn {
-      color: #777f9e;
-      background: transparent;
-      border-radius: 16px;
-      padding: 9px 4px;
-      font-size: 19px;
-    }
-
-    .nav-btn span {
-      display: block;
-      font-size: 9px;
-      margin-top: 3px;
-    }
-
-    .nav-btn.active {
-      color: white;
-      background: linear-gradient(135deg, rgba(124,92,255,.25), rgba(0,217,255,.10));
-    }
-
-    /* TOAST */
-
-    .toast {
-      position: fixed;
-      z-index: 200;
-      left: 50%;
-      bottom: 90px;
-      transform: translate(-50%, 20px);
-      background: rgba(20,24,42,.95);
-      border: 1px solid rgba(255,255,255,.1);
-      padding: 12px 17px;
-      border-radius: 14px;
-      font-size: 12px;
-      opacity: 0;
-      pointer-events: none;
-      transition: .3s ease;
-      white-space: nowrap;
-    }
-
-    .toast.show {
-      opacity: 1;
-      transform: translate(-50%, 0);
-    }
-
-    @media (min-width: 600px) {
-      body {
-        padding: 20px 0;
-      }
-
-      .app {
-        border-radius: 30px;
-        overflow: hidden;
-        background: rgba(5,7,16,.45);
-        box-shadow: 0 30px 90px rgba(0,0,0,.35);
-      }
-
-      .bottom-nav {
-        bottom: 25px;
-      }
-    }
-  </style>
+}
+</style>
 </head>
 
 <body>
 
+<div class="bg-glow glow1"></div>
+<div class="bg-glow glow2"></div>
+<div class="bg-glow glow3"></div>
+
+<!-- LARGE BACKGROUND LOGO -->
+<div class="brand-watermark">
+    <img src="logo.png" alt="">
+</div>
+
 <div class="app">
 
-  <!-- TOP -->
-  <header class="topbar">
+<!-- HEADER -->
+<header class="topbar">
+
     <div class="brand">
-      <img src="logo.png" alt="Nexora AI Logo"
-           onerror="this.style.display='none'">
-      <div>
-        <div class="brand-name">Nexora AI</div>
-        <div class="brand-sub">AI-powered digital ecosystem</div>
-      </div>
+
+        <div class="logo-wrap">
+            <img class="logo" src="logo.png" alt="Nexora AI">
+        </div>
+
+        <div>
+            <div class="brand-title">Nexora AI</div>
+            <div class="brand-subtitle">
+                AI-powered digital ecosystem
+            </div>
+        </div>
+
     </div>
 
-    <button class="icon-btn" onclick="showToast('Notifications coming soon')">
-      🔔
+    <button class="notification"
+        onclick="showToast('Notifications coming soon')">
+        🔔
     </button>
-  </header>
 
-  <!-- PROFILE -->
-  <section class="profile">
+</header>
+
+
+<!-- PROFILE -->
+<section class="profile">
+
     <div class="avatar" id="avatar">
-      N
+        N
     </div>
 
     <div class="profile-info">
-      <div class="welcome">Welcome back</div>
-      <div class="username">
-        <span id="username">Nexora User</span>
-        <span class="verified">✓</span>
-      </div>
-      <div class="level">✦ Explorer Level</div>
+
+        <div class="welcome">
+            Welcome back
+        </div>
+
+        <div class="username">
+            <span id="username">Nexora User</span>
+            <span class="verified">✓</span>
+        </div>
+
+        <div class="level">
+            ✦ Explorer Level
+        </div>
+
     </div>
 
-    <button class="icon-btn" onclick="showToast('Profile coming soon')">
-      ⚙️
+    <button class="settings"
+        onclick="showToast('Profile settings coming soon')">
+        ⚙️
     </button>
-  </section>
 
-  <!-- BALANCE -->
-  <section class="balance-card">
+</section>
 
-    <div class="balance-label">Total Nexora Balance</div>
+
+<!-- BALANCE HERO -->
+<section class="balance-card">
+
+    <div class="shine"></div>
+
+    <div class="balance-label">
+        TOTAL NEXORA BALANCE
+    </div>
 
     <div class="balance">
-      2,450.00
-      <span class="coin">NXR</span>
+        2,450.00
+        <span class="coin">NXR</span>
     </div>
 
-    <div class="profit">↗ +125.40 NXR this week</div>
+    <div class="balance-change">
+        ↗ +125.40 NXR this week
+    </div>
 
     <div class="balance-bottom">
-      <span class="balance-label">Available balance</span>
 
-      <button class="claim-btn" onclick="claimEarning()">
-        ⚡ Claim
-      </button>
+        <div class="available">
+            Available balance
+        </div>
+
+        <button class="claim"
+            onclick="claimEarning()">
+            ⚡ Claim
+        </button>
+
     </div>
 
-  </section>
+</section>
 
-  <!-- STATS -->
-  <div class="section-title">
+
+<!-- OVERVIEW -->
+<div class="section-head">
     <h2>Overview</h2>
     <span>Updated just now</span>
-  </div>
+</div>
 
-  <section class="stats">
 
-    <div class="stat">
-      <div class="stat-icon">⚡</div>
-      <div class="stat-value">38.50</div>
-      <div class="stat-label">Today's earning</div>
-    </div>
+<section class="stats">
 
     <div class="stat">
-      <div class="stat-icon">👥</div>
-      <div class="stat-value">24</div>
-      <div class="stat-label">Total referrals</div>
+
+        <div class="stat-icon">⚡</div>
+
+        <div class="stat-value">
+            38.50
+        </div>
+
+        <div class="stat-label">
+            Today's earning
+        </div>
+
     </div>
+
 
     <div class="stat">
-      <div class="stat-icon">🎯</div>
-      <div class="stat-value">68%</div>
-      <div class="stat-label">Daily progress</div>
+
+        <div class="stat-icon">👥</div>
+
+        <div class="stat-value">
+            24
+        </div>
+
+        <div class="stat-label">
+            Total referrals
+        </div>
+
     </div>
+
 
     <div class="stat">
-      <div class="stat-icon">🏆</div>
-      <div class="stat-value">#128</div>
-      <div class="stat-label">Leaderboard rank</div>
+
+        <div class="stat-icon">🎯</div>
+
+        <div class="stat-value">
+            68%
+        </div>
+
+        <div class="stat-label">
+            Daily progress
+        </div>
+
     </div>
 
-  </section>
 
-  <!-- BONUS -->
-  <section class="bonus">
+    <div class="stat">
 
-    <div class="bonus-icon">🎁</div>
+        <div class="stat-icon">🏆</div>
 
-    <div class="bonus-info">
-      <div class="bonus-title">Daily Bonus</div>
-      <div class="bonus-text">
-        Complete your daily activity and unlock bonus rewards.
-      </div>
+        <div class="stat-value">
+            #128
+        </div>
+
+        <div class="stat-label">
+            Leaderboard rank
+        </div>
+
     </div>
 
-    <button class="bonus-btn" onclick="claimBonus()">
-      Claim
+</section>
+
+
+<!-- DAILY REWARD -->
+<section class="reward">
+
+    <div class="reward-icon">
+        🎁
+    </div>
+
+    <div class="reward-info">
+
+        <div class="reward-title">
+            Daily Premium Reward
+        </div>
+
+        <div class="reward-text">
+            Complete your daily activity to unlock
+            your Nexora reward.
+        </div>
+
+    </div>
+
+    <button class="reward-btn"
+        onclick="claimBonus()">
+        CLAIM
     </button>
 
-  </section>
+</section>
 
-  <!-- EARNING -->
-  <div class="section-title">
+
+<!-- ACTIVITY -->
+<div class="section-head">
+
     <h2>Daily Activity</h2>
-    <span>68% completed</span>
-  </div>
 
-  <section class="earning-card">
-
-    <div class="earning-head">
-      <strong>Today's earning progress</strong>
-      <span class="earning-percent">+38.50 NXR</span>
-    </div>
-
-    <div class="progress">
-      <div class="progress-bar"></div>
-    </div>
-
-    <div class="earning-footer">
-      <span>0 NXR</span>
-      <span>Target: 56.50 NXR</span>
-    </div>
-
-  </section>
-
-  <!-- REFERRAL -->
-  <div class="section-title">
-    <h2>Invite & Earn</h2>
-    <span>Referral</span>
-  </div>
-
-  <section class="referral">
-
-    <div class="ref-title">Grow the Nexora community 🚀</div>
-
-    <div class="ref-desc">
-      Share your referral link with friends and track your community
-      rewards from one place.
-    </div>
-
-    <div class="ref-box">
-      <div class="ref-link" id="refLink">
-        https://t.me/NexoraAI_Pay_bot?start=ref_demo
-      </div>
-
-      <button class="copy-btn" onclick="copyReferral()">
-        📋
-      </button>
-    </div>
-
-  </section>
+    <span>
+        68% completed
+    </span>
 
 </div>
 
-<!-- BOTTOM NAV -->
 
-<nav class="bottom-nav">
+<section class="earning">
 
-  <button class="nav-btn active" onclick="setNav(this,'Home')">
-    🏠
-    <span>Home</span>
-  </button>
+    <div class="earning-top">
 
-  <button class="nav-btn" onclick="setNav(this,'Earn')">
-    ⚡
-    <span>Earn</span>
-  </button>
+        <div class="earning-title">
+            Today's earning progress
+        </div>
 
-  <button class="nav-btn" onclick="setNav(this,'Friends')">
-    👥
-    <span>Friends</span>
-  </button>
+        <div class="earning-value">
+            +38.50 NXR
+        </div>
 
-  <button class="nav-btn" onclick="setNav(this,'Stats')">
-    📊
-    <span>Stats</span>
-  </button>
+    </div>
 
-</nav>
+    <div class="progress">
 
-<div class="toast" id="toast"></div>
+        <div class="progress-bar"></div>
 
-<script>
+    </div>
 
-  /* =========================================
-     TELEGRAM MINI APP
-  ========================================= */
+    <div class="progress-bottom">
 
-  const tg = window.Telegram?.WebApp;
+        <span>
+            0 NXR
+        </span>
 
-  if (tg) {
-    tg.ready();
-    tg.expand();
+        <span>
+            Target: 56.50 NXR
+        </span>
 
-    try {
-      tg.setHeaderColor("#060812");
-      tg.setBackgroundColor("#060812");
-    } catch (e) {}
-  }
+    </div>
 
+</section>
 
-  /* =========================================
-     TELEGRAM USER
-  ========================================= */
 
-  function loadTelegramUser() {
+<!-- REFERRAL -->
+<div class="section-head">
 
-    const user = tg?.initDataUnsafe?.user;
+    <h2>Invite & Earn</h2>
 
-    if (!user) return;
+    <span>
+        Community
+    </span>
 
-    const fullName =
-      [user.first_name, user.last_name]
-        .filter(Boolean)
-        .join(" ");
+</div>
 
-    document.getElementById("username").textContent =
-      fullName || user.username || "Nexora User";
 
-    const avatar = document.getElementById("avatar");
+<section class="referral">
 
-    if (user.photo_url) {
+    <div class="ref-title">
+        Build your Nexora network 🚀
+    </div>
 
-      avatar.innerHTML =
-        `<img src="${user.photo_url}" alt="User">`;
+    <div class="ref-description">
+        Invite friends using your personal referral
+        link and manage your community rewards.
+    </div>
 
-    } else {
+    <div class="ref-link-row">
 
-      avatar.textContent =
-        (user.first_name || "N").charAt(0).toUpperCase();
+        <div class="ref-link" id="refLink">
+            https://t.me/NexoraAI_Pay_bot?start=ref_demo
+        </div>
 
-    }
-  }
+        <button class="copy"
+            onclick="copyReferral()">
+            📋
+        </button>
 
-  loadTelegramUser();
+    </div>
 
+</section>
 
-  /* =========================================
-     TOAST
-  ========================================= */
 
-  let toastTimer;
+<!-- LEADERBOARD -->
+<div class="section-head">
 
-  function showToast(message) {
+    <h2>Top Nexora Users</h2>
 
-    const toast = document.getElementById("toast");
+    <span>
+        Live ranking
+    </span>
 
-    toast.textContent = message;
-    toast.classList.add("show");
+</div>
 
-    clearTimeout(toastTimer);
 
-    toastTimer = setTimeout(() => {
-      toast.classList.remove("show");
-    }, 2200);
-  }
+<section class="leaderboard">
 
+    <div class="rank-row">
 
-  /* =========================================
-     CLAIM
-  ========================================= */
+        <div class="rank">
+            01
+        </div>
 
-  function claimEarning() {
+        <div class="rank-avatar">
+            👑
+        </div>
 
-    showToast("⚡ Claim system will connect to backend");
+        <div class="rank-name">
+            Nexora Prime
+        </div>
 
-  }
+        <div class="rank-amount">
+            9,840 NXR
+        </div>
 
+    </div>
 
-  /* =========================================
-     BONUS
-  ========================================= */
 
-  function claimBonus() {
+    <div class="rank-row">
 
-    showToast("🎁 Daily bonus system coming next");
-
-  }
-
-
-  /* =========================================
-     REFERRAL COPY
-  ========================================= */
-
-  async function copyReferral() {
-
-    const link =
-      document.getElementById("refLink").textContent.trim();
-
-    try {
-
-      await navigator.clipboard.writeText(link);
-
-      showToast("✓ Referral link copied");
-
-    } catch (error) {
-
-      showToast("Copy failed");
-
-    }
-
-  }
-
-
-  /* =========================================
-     NAVIGATION
-  ========================================= */
-
-  function setNav(button, page) {
-
-    document
-      .querySelectorAll(".nav-btn")
-      .forEach(btn => btn.classList.remove("active"));
-
-    button.classList.add("active");
-
-    if (page !== "Home") {
-
-      showToast(page + " section coming soon");
-
-    }
-
-  }
-
-</script>
-
-</body>
-</html>
-```
+        <div class="rank">
+            02
