@@ -1,390 +1,869 @@
+```html
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1.0">
-<title>Nexora AI</title>
-<script src="https://telegram.org/js/telegram-web-app.js"></script>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <meta name="theme-color" content="#070912" />
+  <title>Nexora AI</title>
 
-<style>
-*{box-sizing:border-box;margin:0;padding:0;font-family:Arial,sans-serif}
-body{background:#050a13;color:#fff;min-height:100vh}
-.app{max-width:480px;margin:auto;padding-bottom:90px}
+  <!-- Telegram Mini App -->
+  <script src="https://telegram.org/js/telegram-web-app.js"></script>
 
-.header{padding:22px 18px;display:flex;align-items:center;gap:13px}
-.logo{width:58px;height:58px;object-fit:contain;border-radius:15px}
-.brand h1{font-size:23px;letter-spacing:1px}
-.brand p{font-size:12px;color:#8995aa;margin-top:5px}
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      -webkit-tap-highlight-color: transparent;
+    }
 
-.page{display:none;padding:0 16px}
-.page.active{display:block}
+    :root {
+      --bg: #060812;
+      --card: rgba(18, 23, 42, 0.72);
+      --card-border: rgba(255,255,255,0.08);
+      --text: #f7f8ff;
+      --muted: #8e96b5;
+      --primary: #7c5cff;
+      --secondary: #00d9ff;
+      --success: #2de38a;
+      --danger: #ff5577;
+    }
 
-.card{
-background:linear-gradient(145deg,#101a2c,#09111f);
-border:1px solid #1c3558;
-border-radius:22px;
-padding:22px;
-margin-bottom:15px
-}
+    body {
+      font-family: Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background:
+        radial-gradient(circle at 15% 5%, rgba(124,92,255,.22), transparent 28%),
+        radial-gradient(circle at 90% 15%, rgba(0,217,255,.13), transparent 25%),
+        var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
 
-.balance-title{color:#8b98ae;font-size:13px}
-.balance{font-size:38px;font-weight:700;margin-top:8px}
-.currency{font-size:15px;color:#8995aa}
+    button {
+      font: inherit;
+      border: 0;
+      cursor: pointer;
+    }
 
-.buttons{display:flex;gap:10px;margin-top:20px}
-button{border:0;cursor:pointer}
-.primary,.secondary{
-flex:1;padding:14px;border-radius:13px;font-weight:bold;font-size:14px
-}
-.primary{background:#197cff;color:#fff}
-.secondary{background:#17243b;color:#fff}
+    .app {
+      width: 100%;
+      max-width: 520px;
+      margin: auto;
+      min-height: 100vh;
+      padding-bottom: 100px;
+    }
 
-.stats{display:grid;grid-template-columns:1fr 1fr;gap:12px}
-.stat{
-background:#0d1625;border:1px solid #1a2c48;
-border-radius:18px;padding:18px
-}
-.stat-label{font-size:12px;color:#7e8ba1;margin-bottom:9px}
-.stat-value{font-size:17px;font-weight:bold}
+    /* TOP BAR */
 
-.section-title{font-size:19px;font-weight:bold;margin:23px 0 13px}
+    .topbar {
+      padding: 20px 18px 8px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
 
-.plan{
-background:#0d1625;border:1px solid #1a3355;
-border-radius:19px;padding:19px;margin-bottom:13px
-}
-.plan-top{display:flex;justify-content:space-between;align-items:center}
-.plan-name{font-size:17px;font-weight:bold}
-.tag{
-font-size:10px;color:#67a5ff;background:#142b50;
-padding:6px 10px;border-radius:8px
-}
-.plan p{color:#7e8ba1;font-size:12px;margin-top:9px}
-.plan-btn{
-width:100%;margin-top:15px;padding:12px;border-radius:11px;
-background:#142239;color:#b8c7dc;font-weight:bold
-}
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 11px;
+    }
 
-.ref-box{
-background:linear-gradient(145deg,#15133a,#0b142b);
-border:1px solid #303d91;
-border-radius:20px;padding:22px
-}
-.commission{font-size:34px;font-weight:bold;margin:9px 0;color:#72aaff}
-.muted{color:#8794aa;font-size:13px;line-height:1.5}
-.ref-link{
-margin-top:16px;background:#060b14;border:1px solid #1b2c47;
-padding:12px;border-radius:10px;font-size:11px;
-word-break:break-all;color:#9caac0
-}
+    .brand img {
+      width: 45px;
+      height: 45px;
+      border-radius: 14px;
+      object-fit: cover;
+      box-shadow: 0 0 25px rgba(124,92,255,.35);
+    }
 
-.empty{text-align:center;padding:60px 20px;color:#68758b}
-.empty-icon{font-size:40px;margin-bottom:10px}
+    .brand-name {
+      font-size: 19px;
+      font-weight: 800;
+      letter-spacing: -.4px;
+    }
 
-.profile{
-background:#0d1625;border:1px solid #1a2c48;border-radius:20px;padding:20px
-}
-.row{
-display:flex;justify-content:space-between;gap:12px;
-padding:15px 0;border-bottom:1px solid #17263d
-}
-.row:last-child{border:0}
-.label{font-size:12px;color:#7d8a9f}
-.value{font-size:13px;text-align:right;word-break:break-all}
+    .brand-sub {
+      font-size: 11px;
+      color: var(--muted);
+      margin-top: 2px;
+    }
 
-.notice{
-margin-top:15px;padding:13px;border-radius:12px;
-background:#101a2b;border:1px solid #203653;
-color:#8997ad;font-size:11px;line-height:1.5
-}
+    .icon-btn {
+      width: 42px;
+      height: 42px;
+      border-radius: 14px;
+      color: white;
+      background: rgba(255,255,255,.06);
+      border: 1px solid rgba(255,255,255,.08);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 19px;
+    }
 
-.bottom{
-position:fixed;bottom:0;left:50%;transform:translateX(-50%);
-width:100%;max-width:480px;height:72px;
-background:rgba(5,10,19,.97);border-top:1px solid #172942;
-display:grid;grid-template-columns:repeat(4,1fr);z-index:99
-}
-.nav{
-background:none;color:#68768c;font-size:11px;padding-top:9px
-}
-.nav-icon{display:block;font-size:21px;margin-bottom:5px}
-.nav.active{color:#4d94ff}
-</style>
+    /* PROFILE */
+
+    .profile {
+      margin: 18px;
+      padding: 15px;
+      border: 1px solid var(--card-border);
+      background: linear-gradient(135deg, rgba(255,255,255,.07), rgba(255,255,255,.025));
+      backdrop-filter: blur(18px);
+      border-radius: 22px;
+      display: flex;
+      align-items: center;
+      gap: 13px;
+    }
+
+    .avatar {
+      width: 48px;
+      height: 48px;
+      border-radius: 16px;
+      background: linear-gradient(135deg, var(--primary), var(--secondary));
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 20px;
+      font-weight: 800;
+      overflow: hidden;
+    }
+
+    .avatar img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .profile-info {
+      flex: 1;
+    }
+
+    .welcome {
+      font-size: 12px;
+      color: var(--muted);
+    }
+
+    .username {
+      font-size: 17px;
+      font-weight: 750;
+      margin-top: 2px;
+    }
+
+    .verified {
+      display: inline-flex;
+      margin-left: 5px;
+      color: #00cfff;
+      font-size: 13px;
+    }
+
+    .level {
+      font-size: 11px;
+      color: #a89cff;
+      margin-top: 3px;
+    }
+
+    /* BALANCE */
+
+    .balance-card {
+      margin: 18px;
+      padding: 23px;
+      border-radius: 28px;
+      position: relative;
+      overflow: hidden;
+      background:
+        linear-gradient(135deg, rgba(124,92,255,.95), rgba(57,42,154,.88));
+      box-shadow: 0 20px 60px rgba(79,58,220,.25);
+    }
+
+    .balance-card::before {
+      content: "";
+      position: absolute;
+      width: 190px;
+      height: 190px;
+      right: -70px;
+      top: -80px;
+      border-radius: 50%;
+      background: rgba(255,255,255,.11);
+    }
+
+    .balance-card::after {
+      content: "";
+      position: absolute;
+      width: 130px;
+      height: 130px;
+      left: -65px;
+      bottom: -75px;
+      border-radius: 50%;
+      background: rgba(0,217,255,.12);
+    }
+
+    .balance-label {
+      color: rgba(255,255,255,.72);
+      font-size: 12px;
+    }
+
+    .balance {
+      font-size: 37px;
+      font-weight: 850;
+      letter-spacing: -1.5px;
+      margin: 6px 0 4px;
+    }
+
+    .coin {
+      font-size: 14px;
+      font-weight: 650;
+      opacity: .85;
+    }
+
+    .balance-bottom {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-top: 19px;
+    }
+
+    .profit {
+      font-size: 12px;
+      color: #bfffe0;
+    }
+
+    .claim-btn {
+      padding: 11px 18px;
+      border-radius: 13px;
+      background: white;
+      color: #4b36bc;
+      font-weight: 800;
+      box-shadow: 0 8px 25px rgba(0,0,0,.18);
+    }
+
+    /* QUICK STATS */
+
+    .section-title {
+      padding: 0 18px;
+      margin: 23px 0 12px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .section-title h2 {
+      font-size: 17px;
+    }
+
+    .section-title span {
+      color: var(--muted);
+      font-size: 11px;
+    }
+
+    .stats {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 11px;
+      padding: 0 18px;
+    }
+
+    .stat {
+      padding: 17px;
+      border-radius: 20px;
+      background: var(--card);
+      border: 1px solid var(--card-border);
+      backdrop-filter: blur(15px);
+    }
+
+    .stat-icon {
+      width: 35px;
+      height: 35px;
+      border-radius: 11px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: rgba(124,92,255,.13);
+      margin-bottom: 11px;
+    }
+
+    .stat-value {
+      font-size: 19px;
+      font-weight: 800;
+    }
+
+    .stat-label {
+      color: var(--muted);
+      font-size: 11px;
+      margin-top: 4px;
+    }
+
+    /* DAILY BONUS */
+
+    .bonus {
+      margin: 18px;
+      padding: 18px;
+      border-radius: 22px;
+      border: 1px solid rgba(0,217,255,.14);
+      background:
+        linear-gradient(135deg, rgba(0,217,255,.08), rgba(124,92,255,.08));
+      display: flex;
+      align-items: center;
+      gap: 13px;
+    }
+
+    .bonus-icon {
+      width: 48px;
+      height: 48px;
+      border-radius: 16px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: rgba(255,255,255,.07);
+      font-size: 22px;
+    }
+
+    .bonus-info {
+      flex: 1;
+    }
+
+    .bonus-title {
+      font-size: 14px;
+      font-weight: 750;
+    }
+
+    .bonus-text {
+      color: var(--muted);
+      font-size: 10px;
+      margin-top: 3px;
+    }
+
+    .bonus-btn {
+      padding: 10px 13px;
+      border-radius: 12px;
+      color: white;
+      background: linear-gradient(135deg, #00c9e8, #6275ff);
+      font-size: 11px;
+      font-weight: 800;
+    }
+
+    /* EARNING */
+
+    .earning-card {
+      margin: 0 18px;
+      padding: 19px;
+      border-radius: 23px;
+      background: var(--card);
+      border: 1px solid var(--card-border);
+    }
+
+    .earning-head {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .earning-head strong {
+      font-size: 14px;
+    }
+
+    .earning-percent {
+      font-size: 12px;
+      color: var(--success);
+      font-weight: 700;
+    }
+
+    .progress {
+      height: 8px;
+      margin-top: 17px;
+      border-radius: 20px;
+      background: rgba(255,255,255,.07);
+      overflow: hidden;
+    }
+
+    .progress-bar {
+      height: 100%;
+      width: 68%;
+      border-radius: inherit;
+      background: linear-gradient(90deg, var(--primary), var(--secondary));
+      box-shadow: 0 0 15px rgba(0,217,255,.35);
+    }
+
+    .earning-footer {
+      display: flex;
+      justify-content: space-between;
+      color: var(--muted);
+      font-size: 10px;
+      margin-top: 8px;
+    }
+
+    /* REFERRAL */
+
+    .referral {
+      margin: 18px;
+      padding: 20px;
+      border-radius: 24px;
+      background: linear-gradient(135deg, rgba(255,255,255,.06), rgba(255,255,255,.025));
+      border: 1px solid var(--card-border);
+    }
+
+    .ref-title {
+      font-size: 16px;
+      font-weight: 800;
+    }
+
+    .ref-desc {
+      font-size: 11px;
+      color: var(--muted);
+      margin-top: 5px;
+      line-height: 1.5;
+    }
+
+    .ref-box {
+      margin-top: 15px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .ref-link {
+      flex: 1;
+      background: rgba(0,0,0,.18);
+      border: 1px solid rgba(255,255,255,.06);
+      padding: 12px;
+      border-radius: 13px;
+      font-size: 10px;
+      color: #bfc5e0;
+      overflow: hidden;
+      white-space: nowrap;
+      text-overflow: ellipsis;
+    }
+
+    .copy-btn {
+      width: 43px;
+      height: 43px;
+      border-radius: 13px;
+      background: rgba(124,92,255,.18);
+      color: white;
+    }
+
+    /* NAV */
+
+    .bottom-nav {
+      position: fixed;
+      z-index: 100;
+      bottom: 12px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: calc(100% - 24px);
+      max-width: 496px;
+      padding: 9px;
+      border-radius: 23px;
+      background: rgba(12,15,28,.88);
+      border: 1px solid rgba(255,255,255,.09);
+      backdrop-filter: blur(22px);
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      box-shadow: 0 15px 45px rgba(0,0,0,.35);
+    }
+
+    .nav-btn {
+      color: #777f9e;
+      background: transparent;
+      border-radius: 16px;
+      padding: 9px 4px;
+      font-size: 19px;
+    }
+
+    .nav-btn span {
+      display: block;
+      font-size: 9px;
+      margin-top: 3px;
+    }
+
+    .nav-btn.active {
+      color: white;
+      background: linear-gradient(135deg, rgba(124,92,255,.25), rgba(0,217,255,.10));
+    }
+
+    /* TOAST */
+
+    .toast {
+      position: fixed;
+      z-index: 200;
+      left: 50%;
+      bottom: 90px;
+      transform: translate(-50%, 20px);
+      background: rgba(20,24,42,.95);
+      border: 1px solid rgba(255,255,255,.1);
+      padding: 12px 17px;
+      border-radius: 14px;
+      font-size: 12px;
+      opacity: 0;
+      pointer-events: none;
+      transition: .3s ease;
+      white-space: nowrap;
+    }
+
+    .toast.show {
+      opacity: 1;
+      transform: translate(-50%, 0);
+    }
+
+    @media (min-width: 600px) {
+      body {
+        padding: 20px 0;
+      }
+
+      .app {
+        border-radius: 30px;
+        overflow: hidden;
+        background: rgba(5,7,16,.45);
+        box-shadow: 0 30px 90px rgba(0,0,0,.35);
+      }
+
+      .bottom-nav {
+        bottom: 25px;
+      }
+    }
+  </style>
 </head>
 
 <body>
 
 <div class="app">
 
-<header class="header">
-<img src="./logo.png" class="logo" alt="Nexora AI">
-<div class="brand">
-<h1>NEXORA AI</h1>
-<p>Blockchain-powered digital finance</p>
+  <!-- TOP -->
+  <header class="topbar">
+    <div class="brand">
+      <img src="logo.png" alt="Nexora AI Logo"
+           onerror="this.style.display='none'">
+      <div>
+        <div class="brand-name">Nexora AI</div>
+        <div class="brand-sub">AI-powered digital ecosystem</div>
+      </div>
+    </div>
+
+    <button class="icon-btn" onclick="showToast('Notifications coming soon')">
+      🔔
+    </button>
+  </header>
+
+  <!-- PROFILE -->
+  <section class="profile">
+    <div class="avatar" id="avatar">
+      N
+    </div>
+
+    <div class="profile-info">
+      <div class="welcome">Welcome back</div>
+      <div class="username">
+        <span id="username">Nexora User</span>
+        <span class="verified">✓</span>
+      </div>
+      <div class="level">✦ Explorer Level</div>
+    </div>
+
+    <button class="icon-btn" onclick="showToast('Profile coming soon')">
+      ⚙️
+    </button>
+  </section>
+
+  <!-- BALANCE -->
+  <section class="balance-card">
+
+    <div class="balance-label">Total Nexora Balance</div>
+
+    <div class="balance">
+      2,450.00
+      <span class="coin">NXR</span>
+    </div>
+
+    <div class="profit">↗ +125.40 NXR this week</div>
+
+    <div class="balance-bottom">
+      <span class="balance-label">Available balance</span>
+
+      <button class="claim-btn" onclick="claimEarning()">
+        ⚡ Claim
+      </button>
+    </div>
+
+  </section>
+
+  <!-- STATS -->
+  <div class="section-title">
+    <h2>Overview</h2>
+    <span>Updated just now</span>
+  </div>
+
+  <section class="stats">
+
+    <div class="stat">
+      <div class="stat-icon">⚡</div>
+      <div class="stat-value">38.50</div>
+      <div class="stat-label">Today's earning</div>
+    </div>
+
+    <div class="stat">
+      <div class="stat-icon">👥</div>
+      <div class="stat-value">24</div>
+      <div class="stat-label">Total referrals</div>
+    </div>
+
+    <div class="stat">
+      <div class="stat-icon">🎯</div>
+      <div class="stat-value">68%</div>
+      <div class="stat-label">Daily progress</div>
+    </div>
+
+    <div class="stat">
+      <div class="stat-icon">🏆</div>
+      <div class="stat-value">#128</div>
+      <div class="stat-label">Leaderboard rank</div>
+    </div>
+
+  </section>
+
+  <!-- BONUS -->
+  <section class="bonus">
+
+    <div class="bonus-icon">🎁</div>
+
+    <div class="bonus-info">
+      <div class="bonus-title">Daily Bonus</div>
+      <div class="bonus-text">
+        Complete your daily activity and unlock bonus rewards.
+      </div>
+    </div>
+
+    <button class="bonus-btn" onclick="claimBonus()">
+      Claim
+    </button>
+
+  </section>
+
+  <!-- EARNING -->
+  <div class="section-title">
+    <h2>Daily Activity</h2>
+    <span>68% completed</span>
+  </div>
+
+  <section class="earning-card">
+
+    <div class="earning-head">
+      <strong>Today's earning progress</strong>
+      <span class="earning-percent">+38.50 NXR</span>
+    </div>
+
+    <div class="progress">
+      <div class="progress-bar"></div>
+    </div>
+
+    <div class="earning-footer">
+      <span>0 NXR</span>
+      <span>Target: 56.50 NXR</span>
+    </div>
+
+  </section>
+
+  <!-- REFERRAL -->
+  <div class="section-title">
+    <h2>Invite & Earn</h2>
+    <span>Referral</span>
+  </div>
+
+  <section class="referral">
+
+    <div class="ref-title">Grow the Nexora community 🚀</div>
+
+    <div class="ref-desc">
+      Share your referral link with friends and track your community
+      rewards from one place.
+    </div>
+
+    <div class="ref-box">
+      <div class="ref-link" id="refLink">
+        https://t.me/NexoraAI_Pay_bot?start=ref_demo
+      </div>
+
+      <button class="copy-btn" onclick="copyReferral()">
+        📋
+      </button>
+    </div>
+
+  </section>
+
 </div>
-</header>
 
-<!-- HOME -->
-<section id="home" class="page active">
+<!-- BOTTOM NAV -->
 
-<div class="card">
-<div class="balance-title">Available Balance</div>
-<div class="balance">0.00 <span class="currency">USDT</span></div>
+<nav class="bottom-nav">
 
-<div class="buttons">
-<button class="primary" onclick="deposit()">Deposit</button>
-<button class="secondary" onclick="withdraw()">Withdraw</button>
-</div>
-</div>
+  <button class="nav-btn active" onclick="setNav(this,'Home')">
+    🏠
+    <span>Home</span>
+  </button>
 
-<div class="stats">
-<div class="stat">
-<div class="stat-label">Total Earnings</div>
-<div class="stat-value">0.00 USDT</div>
-</div>
+  <button class="nav-btn" onclick="setNav(this,'Earn')">
+    ⚡
+    <span>Earn</span>
+  </button>
 
-<div class="stat">
-<div class="stat-label">Active Investment</div>
-<div class="stat-value">0.00 USDT</div>
-</div>
-</div>
+  <button class="nav-btn" onclick="setNav(this,'Friends')">
+    👥
+    <span>Friends</span>
+  </button>
 
-<div class="section-title">Investment Plans</div>
-
-<div class="plan">
-<div class="plan-top">
-<div class="plan-name">Starter</div>
-<div class="tag">ACTIVE</div>
-</div>
-<p>Entry-level digital finance plan.</p>
-<button class="plan-btn" onclick="plan()">View Plan</button>
-</div>
-
-<div class="plan">
-<div class="plan-top">
-<div class="plan-name">Growth</div>
-<div class="tag">POPULAR</div>
-</div>
-<p>Designed for users seeking higher capital allocation.</p>
-<button class="plan-btn" onclick="plan()">View Plan</button>
-</div>
-
-<div class="notice">
-⚠️ Digital asset investments involve risk. Returns are not guaranteed.
-Review the platform terms before committing funds.
-</div>
-
-</section>
-
-<!-- REFERRAL -->
-<section id="referral" class="page">
-
-<div class="ref-box">
-<div class="section-title">Referral Program</div>
-
-<div class="commission">5%</div>
-
-<p class="muted">
-Earn a 5% referral commission on qualifying confirmed deposits
-made by users referred through your referral link.
-</p>
-
-<div class="ref-link" id="refLink">
-Open Nexora AI from Telegram to generate your referral link.
-</div>
-
-<button class="primary" style="width:100%;margin-top:12px"
-onclick="copyReferral()">Copy Referral Link</button>
-</div>
-
-<div class="section-title">Referral Stats</div>
-
-<div class="stats">
-<div class="stat">
-<div class="stat-label">Total Referrals</div>
-<div class="stat-value">0</div>
-</div>
-
-<div class="stat">
-<div class="stat-label">Referral Earnings</div>
-<div class="stat-value">0 USDT</div>
-</div>
-</div>
-
-</section>
-
-<!-- HISTORY -->
-<section id="history" class="page">
-
-<div class="section-title">Transaction History</div>
-
-<div class="empty">
-<div class="empty-icon">📊</div>
-<div>No transactions yet.</div>
-</div>
-
-</section>
-
-<!-- PROFILE -->
-<section id="profile" class="page">
-
-<div class="section-title">Profile</div>
-
-<div class="profile">
-
-<div class="row">
-<div class="label">Telegram User</div>
-<div class="value" id="username">Guest</div>
-</div>
-
-<div class="row">
-<div class="label">User ID</div>
-<div class="value" id="userid">—</div>
-</div>
-
-<div class="row">
-<div class="label">Network</div>
-<div class="value">BNB Smart Chain</div>
-</div>
-
-<div class="row">
-<div class="label">Token</div>
-<div class="value">USDT (BEP-20)</div>
-</div>
-
-<div class="row">
-<div class="label">Withdrawal Fee</div>
-<div class="value">1.5%</div>
-</div>
-
-<div class="row">
-<div class="label">Wallet</div>
-<div class="value">Not connected</div>
-</div>
-
-</div>
-
-</section>
-
-</div>
-
-<!-- NAVIGATION -->
-<nav class="bottom">
-
-<button class="nav active" onclick="showPage('home',this)">
-<span class="nav-icon">⌂</span>Home
-</button>
-
-<button class="nav" onclick="showPage('referral',this)">
-<span class="nav-icon">↗</span>Referral
-</button>
-
-<button class="nav" onclick="showPage('history',this)">
-<span class="nav-icon">◷</span>History
-</button>
-
-<button class="nav" onclick="showPage('profile',this)">
-<span class="nav-icon">◉</span>Profile
-</button>
+  <button class="nav-btn" onclick="setNav(this,'Stats')">
+    📊
+    <span>Stats</span>
+  </button>
 
 </nav>
 
+<div class="toast" id="toast"></div>
+
 <script>
 
-const tg=window.Telegram.WebApp;
-tg.ready();
-tg.expand();
+  /* =========================================
+     TELEGRAM MINI APP
+  ========================================= */
 
-const user=tg.initDataUnsafe?.user;
+  const tg = window.Telegram?.WebApp;
 
-if(user){
+  if (tg) {
+    tg.ready();
+    tg.expand();
 
-document.getElementById("userid").innerText=user.id;
+    try {
+      tg.setHeaderColor("#060812");
+      tg.setBackgroundColor("#060812");
+    } catch (e) {}
+  }
 
-let name=user.first_name||"";
 
-if(user.last_name)
-name+=" "+user.last_name;
+  /* =========================================
+     TELEGRAM USER
+  ========================================= */
 
-if(user.username)
-name+=" @"+user.username;
+  function loadTelegramUser() {
 
-document.getElementById("username").innerText=name||"Telegram User";
+    const user = tg?.initDataUnsafe?.user;
 
-document.getElementById("refLink").innerText=
-"https://t.me/NexoraAI_Pay_bot?start="+user.id;
-}
+    if (!user) return;
 
-function showPage(page,btn){
+    const fullName =
+      [user.first_name, user.last_name]
+        .filter(Boolean)
+        .join(" ");
 
-document.querySelectorAll(".page").forEach(p=>
-p.classList.remove("active"));
+    document.getElementById("username").textContent =
+      fullName || user.username || "Nexora User";
 
-document.getElementById(page).classList.add("active");
+    const avatar = document.getElementById("avatar");
 
-document.querySelectorAll(".nav").forEach(b=>
-b.classList.remove("active"));
+    if (user.photo_url) {
 
-btn.classList.add("active");
+      avatar.innerHTML =
+        `<img src="${user.photo_url}" alt="User">`;
 
-window.scrollTo(0,0);
-}
+    } else {
 
-function deposit(){
+      avatar.textContent =
+        (user.first_name || "N").charAt(0).toUpperCase();
 
-tg.showPopup({
-title:"Deposit",
-message:"USDT BEP-20 deposit functionality will be connected in the next stage.",
-buttons:[{type:"ok"}]
-});
+    }
+  }
 
-}
+  loadTelegramUser();
 
-function withdraw(){
 
-tg.showPopup({
-title:"Withdrawal",
-message:"Withdrawal fee: 1.5%. Actual withdrawal processing will be enabled after wallet and transaction verification are implemented.",
-buttons:[{type:"ok"}]
-});
+  /* =========================================
+     TOAST
+  ========================================= */
 
-}
+  let toastTimer;
 
-function plan(){
+  function showToast(message) {
 
-tg.showPopup({
-title:"Investment Plan",
-message:"Plan functionality will be enabled after the backend is connected. Returns are not guaranteed.",
-buttons:[{type:"ok"}]
-});
+    const toast = document.getElementById("toast");
 
-}
+    toast.textContent = message;
+    toast.classList.add("show");
 
-function copyReferral(){
+    clearTimeout(toastTimer);
 
-const link=document.getElementById("refLink").innerText;
+    toastTimer = setTimeout(() => {
+      toast.classList.remove("show");
+    }, 2200);
+  }
 
-if(navigator.clipboard){
 
-navigator.clipboard.writeText(link).then(()=>{
+  /* =========================================
+     CLAIM
+  ========================================= */
 
-tg.showPopup({
-title:"Referral Link",
-message:"Referral link copied successfully.",
-buttons:[{type:"ok"}]
-});
+  function claimEarning() {
 
-});
+    showToast("⚡ Claim system will connect to backend");
 
-}else{
+  }
 
-alert(link);
 
-}
+  /* =========================================
+     BONUS
+  ========================================= */
 
-}
+  function claimBonus() {
+
+    showToast("🎁 Daily bonus system coming next");
+
+  }
+
+
+  /* =========================================
+     REFERRAL COPY
+  ========================================= */
+
+  async function copyReferral() {
+
+    const link =
+      document.getElementById("refLink").textContent.trim();
+
+    try {
+
+      await navigator.clipboard.writeText(link);
+
+      showToast("✓ Referral link copied");
+
+    } catch (error) {
+
+      showToast("Copy failed");
+
+    }
+
+  }
+
+
+  /* =========================================
+     NAVIGATION
+  ========================================= */
+
+  function setNav(button, page) {
+
+    document
+      .querySelectorAll(".nav-btn")
+      .forEach(btn => btn.classList.remove("active"));
+
+    button.classList.add("active");
+
+    if (page !== "Home") {
+
+      showToast(page + " section coming soon");
+
+    }
+
+  }
 
 </script>
 
 </body>
 </html>
+```
