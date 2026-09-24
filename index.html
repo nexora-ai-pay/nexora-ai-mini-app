@@ -79,33 +79,89 @@ function openEarning(){openModal('Earning USDT','Current backend balance',`<div 
 function openClaim(){openModal('Claim Rewards','Secure claim status',`<div class="notice">Claim UI is ready. No balance is increased until a verified backend claim endpoint is enabled.</div>`)}
 function openMining(){openModal('Live Mining','AI Mining Engine',`<div class="mine"><div class="mineRow"><div class="bolt">ϟ</div><div style="flex:1"><div class="mineName">AI Mining Engine</div><div class="mineSub">Live interface • backend earning engine pending</div></div><span class="live">● LIVE</span></div></div>`)}
 async function openDeposit(){
-  let depositAddress=window.NEXORA_DEPOSIT_ADDRESS||NEXORA_DEPOSIT_ADDRESS||'';
-  openModal('Deposit','USDT deposit • BEP-20 network',`
-    <div class="depositPanel">
-      <div class="networkPill"><span class="depositDot"></span> BNB Smart Chain • BEP-20 • USDT</div>
-      <label>Deposit Amount (USDT)</label>
-      <input id="depositAmount" class="field" type="number" min="0.0001" step="0.0001" placeholder="Enter amount for QR">
-      <div class="premiumBox">
-        <label>Official Deposit Address</label>
-        <div class="copyRow"><input id="depositAddress" class="field" readonly value="${esc(depositAddress||'Deposit wallet address will appear after admin configuration.')}"><button class="copyBtn" onclick="copyDepositAddress()">Copy</button></div>
-        <div class="qrWrap"><div id="depositQR"></div></div>
-        <div class="qrCaption">QR is for <b>BEP-20 USDT only</b>. The QR uses the official BSC USDT contract and the amount entered above.</div>
+  openModal(
+    'Deposit',
+    'USDT deposit · BEP-20 network',
+    `
+      <div class="depositPanel">
+
+        <div class="networkPill">
+          <span class="depositDot"></span>
+          BNB Smart Chain · BEP-20 · USDT
+        </div>
+
+        <label>Deposit Amount (USDT)</label>
+
+        <input
+          id="depositAmount"
+          class="field"
+          type="number"
+          min="0.0001"
+          step="0.0001"
+          placeholder="Enter deposit amount"
+        >
+
+        <div class="depositNote">
+          Enter the amount you want to deposit, then tap
+          <b>Submit Deposit Request</b>.
+          Your exact payable amount will be generated after submission.
+        </div>
+
+        <div class="depositSteps">
+          <div><b>01</b><span>Enter amount</span></div>
+          <div><b>02</b><span>Generate payment</span></div>
+          <div><b>03</b><span>Blockchain confirmation</span></div>
+        </div>
+
+        <button
+          class="primary"
+          style="margin-top:12px;width:100%"
+          onclick="submitDeposit()"
+        >
+          Submit Deposit Request
+        </button>
+
+        <div class="sectionLabel">DEPOSIT HISTORY</div>
+
+        <div id="depositBody" class="notice">
+          Loading history...
+        </div>
+
       </div>
-      <div class="depositNote">Send only <b>USDT on BEP-20 (BNB Smart Chain)</b>. Never send TRC-20, ERC-20 or another network to this address. Verify the address before sending.</div>
-      <div class="depositSteps"><div><b>01</b><span>Enter amount</span></div><div><b>02</b><span>Scan QR / send BEP-20 USDT</span></div><div><b>03</b><span>Blockchain confirmation</span></div></div>
-      <button class="primary" style="margin-top:12px;width:100%" onclick="submitDeposit()">Submit Deposit Request</button><div class="sectionLabel">Deposit History</div>
-      <div id="depositBody" class="notice">Loading history...</div>
-    </div>`);
-  renderDepositQR();
-  document.getElementById('depositAmount')?.addEventListener('input',renderDepositQR);
+    `
+  );
+
   try{
-    const cfg=await apiFetch('/api/deposit-config');
-    const remote=String(cfg.deposit_address||cfg.address||'').trim();
-    if(remote){depositAddress=remote;const a=document.getElementById('depositAddress');if(a)a.value=remote;renderDepositQR()}
-  }catch(e){}
-  try{const d=await apiFetch('/api/deposits');const e=document.getElementById('depositBody');if(e)e.innerHTML=(d.deposits||[]).length?(d.deposits||[]).slice(0,10).map(x=>`<div class="historyRow"><div><b>${Number(x.amount||0).toFixed(4)} USDT</b><small>${esc(x.created_at||'')}</small></div><span class="statusPill">${esc(x.status||'pending')}</span></div>`).join(''):'No deposit records yet.'}catch(e){setText('depositBody','Unable to load deposit history right now.')}
+    const d=await apiFetch('/api/deposits');
+    const e=document.getElementById('depositBody');
+
+    if(e){
+      e.innerHTML=(d.deposits||[]).length
+        ? d.deposits.slice(0,10).map(x=>`
+            <div class="historyRow">
+              <div>
+                <b>${Number(x.amount||0).toFixed(6)} USDT</b>
+                <small>${esc(x.created_at||'')}</small>
+              </div>
+              <span class="statusPill">
+                ${esc(x.status||'pending')}
+              </span>
+            </div>
+          `).join('')
+        : 'No deposit records yet.';
+    }
+
+  }catch(e){
+    setText(
+      'depositBody',
+      'Unable to load deposit history right now.'
+    );
+  }
 }
+
+
 async function submitDeposit(){
+
   const input=document.getElementById('depositAmount');
   const amount=Number(input?.value||0);
 
@@ -115,39 +171,295 @@ async function submitDeposit(){
   }
 
   try{
-    const btn=[...document.querySelectorAll('#modal button')].find(b=>b.textContent.includes('Submit Deposit Request'));
-    if(btn){btn.disabled=true;btn.textContent='Submitting...';}
+
+    const btn=[...document.querySelectorAll('#modal button')]
+      .find(b=>b.textContent.includes('Submit Deposit Request'));
+
+    if(btn){
+      btn.disabled=true;
+      btn.textContent='Generating Payment...';
+    }
 
     const d=await apiFetch('/api/deposits',{
       method:'POST',
       body:JSON.stringify({amount})
     });
 
-    showToast('Deposit request submitted');
-    if(btn){btn.disabled=false;btn.textContent='Submit Deposit Request';}
+    const deposit=d?.deposit||d;
 
-    const e=document.getElementById('depositBody');
-    if(e)e.innerHTML='<div class="notice">Deposit request submitted and is pending blockchain verification.</div>';
+    const uniqueAmount=Number(deposit?.amount||0);
 
-    console.log('Deposit request:',d);
+    const address=String(
+      deposit?.deposit_address||
+      window.NEXORA_DEPOSIT_ADDRESS||
+      ''
+    ).trim();
+
+    if(!Number.isFinite(uniqueAmount)||uniqueAmount<=0){
+      throw new Error(
+        'Unique deposit amount was not generated'
+      );
+    }
+
+    if(!/^0x[a-fA-F0-9]{40}$/.test(address)){
+      throw new Error(
+        'Deposit wallet address is not configured'
+      );
+    }
+
+    showDepositPayment(
+      uniqueAmount,
+      address
+    );
+
   }catch(e){
-    const btn=[...document.querySelectorAll('#modal button')].find(b=>b.textContent.includes('Submitting...'));
-    if(btn){btn.disabled=false;btn.textContent='Submit Deposit Request';}
-    showToast(e.message||'Failed to submit deposit request');
+
+    const btn=[...document.querySelectorAll('#modal button')]
+      .find(b=>b.textContent.includes('Generating Payment...'));
+
+    if(btn){
+      btn.disabled=false;
+      btn.textContent='Submit Deposit Request';
+    }
+
+    showToast(
+      e.message||
+      'Failed to create deposit request'
+    );
   }
 }
 
-function renderDepositQR(){
-  const box=document.getElementById('depositQR');if(!box)return;box.innerHTML='';
-  const address=String(document.getElementById('depositAddress')?.value||'').trim();
-  const amount=Number(document.getElementById('depositAmount')?.value||0);
-  if(!/^0x[a-fA-F0-9]{40}$/.test(address)){box.innerHTML='<div style="padding:18px;text-align:center;color:#0b5a35;font-weight:900;font-size:12px">BEP-20 deposit QR will appear after the official wallet address is configured.</div>';return}
-  let uri='ethereum:'+address+'@'+BEP20_CHAIN_ID+'/transfer?address='+BEP20_USDT_CONTRACT;
-  if(amount>0)uri+='&uint256='+Math.round(amount*1e18);
-  if(window.QRCode)new QRCode(box,{text:uri,width:190,height:190,colorDark:'#063821',colorLight:'#effff5',correctLevel:QRCode.CorrectLevel.M});
+
+function showDepositPayment(uniqueAmount,address){
+
+  const amountText=uniqueAmount.toFixed(6);
+
+  openModal(
+    'Deposit Payment',
+    'Send USDT exactly as shown below',
+    `
+      <div class="depositPanel">
+
+        <div class="networkPill">
+          <span class="depositDot"></span>
+          BNB Smart Chain · BEP-20 · USDT
+        </div>
+
+        <div class="premiumBox">
+
+          <label>Generated Unique Amount</label>
+
+          <div class="copyRow">
+
+            <input
+              id="generatedDepositAmount"
+              class="field"
+              readonly
+              value="${amountText}"
+            >
+
+            <button
+              class="copyBtn"
+              onclick="copyDepositAmount()"
+            >
+              Copy
+            </button>
+
+          </div>
+
+          <div class="amountHint">
+            Send exactly <b>${amountText} USDT</b>
+          </div>
+
+        </div>
+
+
+        <div class="premiumBox">
+
+          <label>Official Deposit Address</label>
+
+          <div class="copyRow">
+
+            <input
+              id="paymentDepositAddress"
+              class="field"
+              readonly
+              value="${esc(address)}"
+            >
+
+            <button
+              class="copyBtn"
+              onclick="copyPaymentDepositAddress()"
+            >
+              Copy
+            </button>
+
+          </div>
+
+        </div>
+
+
+        <div class="premiumBox">
+
+          <label>Scan QR / Send BEP-20 USDT</label>
+
+          <div class="qrWrap">
+            <div id="paymentDepositQR"></div>
+          </div>
+
+          <div class="qrCaption">
+            QR contains the official BEP-20 USDT contract,
+            deposit address and exact generated amount.
+          </div>
+
+        </div>
+
+
+        <div class="depositNote">
+          Send only <b>USDT on BEP-20 (BNB Smart Chain)</b>.
+          Never send TRC-20, ERC-20 or another network to this
+          address. Verify the address and amount before sending.
+        </div>
+
+
+        <div class="depositSteps">
+
+          <div>
+            <b>01</b>
+            <span>Send exact amount</span>
+          </div>
+
+          <div>
+            <b>02</b>
+            <span>Blockchain confirmation</span>
+          </div>
+
+          <div>
+            <b>03</b>
+            <span>Balance verification</span>
+          </div>
+
+        </div>
+
+
+        <div class="notice" style="margin-top:12px">
+          Deposit request created successfully.
+          Status: <b>Pending blockchain verification</b>.
+        </div>
+
+      </div>
+    `
+  );
+
+  renderPaymentQR(
+    address,
+    uniqueAmount
+  );
 }
-function copyDepositAddress(){const v=document.getElementById('depositAddress')?.value||'';if(!/^0x[a-fA-F0-9]{40}$/.test(v))return showToast('Official BEP-20 deposit wallet is not configured yet');navigator.clipboard?.writeText(v);showToast('BEP-20 deposit address copied')}
-async function openReferral(){
+
+
+function renderPaymentQR(address,amount){
+
+  const box=document.getElementById(
+    'paymentDepositQR'
+  );
+
+  if(!box)return;
+
+  box.innerHTML='';
+
+  const uri=
+    'ethereum:'+
+    address+
+    '@'+
+    BEP20_CHAIN_ID+
+    '/transfer?address='+
+    BEP20_USDT_CONTRACT+
+    '&uint256='+
+    Math.round(amount*1e18);
+
+  if(typeof QRCode!=='undefined'){
+
+    new QRCode(box,{
+      text:uri,
+      width:190,
+      height:190,
+      colorDark:'#063821',
+      colorLight:'#effff5',
+      correctLevel:QRCode.CorrectLevel.M
+    });
+
+  }else{
+
+    box.innerHTML=
+      '<div style="padding:18px;text-align:center">'+
+      'QR unavailable'+
+      '</div>';
+  }
+}
+
+
+async function copyDepositAmount(){
+
+  const v=String(
+    document.getElementById(
+      'generatedDepositAmount'
+    )?.value||''
+  ).trim();
+
+  if(!v){
+    showToast('Deposit amount unavailable');
+    return;
+  }
+
+  try{
+
+    await navigator.clipboard.writeText(v);
+
+    showToast(
+      'Unique deposit amount copied'
+    );
+
+  }catch(e){
+
+    showToast(
+      'Unable to copy amount'
+    );
+  }
+}
+
+
+async function copyPaymentDepositAddress(){
+
+  const v=String(
+    document.getElementById(
+      'paymentDepositAddress'
+    )?.value||''
+  ).trim();
+
+  if(!/^0x[a-fA-F0-9]{40}$/.test(v)){
+    showToast(
+      'Deposit address unavailable'
+    );
+    return;
+  }
+
+  try{
+
+    await navigator.clipboard.writeText(v);
+
+    showToast(
+      'BEP-20 deposit address copied'
+    );
+
+  }catch(e){
+
+    showToast(
+      'Unable to copy address'
+    );
+  }
+}
+async functin openReferral(){
   openModal('Referral Program','Invite • Track • Earn 5% on successful NFT purchases',`<div class="notice">Loading referral activity...</div>`);
   try{
     const d=await apiFetch('/api/referral');
@@ -212,6 +524,189 @@ function openNFT(){const filters=['All','Common','Rare','Epic','Legendary','Myth
 function filterNFT(r,b){document.querySelectorAll('.filter').forEach(x=>x.classList.remove('active'));b.classList.add('active');document.querySelectorAll('.nftCard').forEach(c=>c.classList.toggle('hidden',r!=='All'&&!c.classList.contains('rarity-'+r.toLowerCase())))}
 async function buyNFT(id){const p=NFT_PLANS.find(x=>x.id===id);if(!p)return;if(balance<p.price){showToast(`Insufficient balance for ${p.name}`);return}if(!confirm(`Buy ${p.name} NFT for ${p.price.toFixed(2)} USDT?`))return;try{const d=await apiFetch('/api/nft/purchase',{method:'POST',body:JSON.stringify({nft_id:id,client_request_id:'NFT-'+Date.now()+'-'+Math.random().toString(36).slice(2)})});if(d.user)applyUser(d.user);showToast(`${p.name} purchased successfully`);loadNFTPurchases()}catch(e){showToast(e.message||'NFT purchase failed')}}
 async function loadNFTPurchases(){const e=document.getElementById('purchaseList');if(!e)return;e.innerHTML='<div class="notice">Loading purchases...</div>';try{const d=await apiFetch('/api/nft/purchases');const rows=d.purchases||[];e.innerHTML=rows.length?rows.map(p=>`<div class="notice" style="margin-bottom:6px"><b>${esc(p.nft_name||p.name||'NFT')}</b> · ${Number(p.price||0).toFixed(2)} USDT<br><small>${esc(p.created_at||'')}</small></div>`).join(''):'<div class="notice">No NFT purchases yet.</div>'}catch(e){e.innerHTML='<div class="notice">'+esc(e.message)+'</div>'}}
+async function openReferral(){
+  openModal(
+    'Referral Program',
+    'Invite · Track · Earn 5% on successful NFT purchases',
+    '<div class="notice">Loading referral activity...</div>'
+  );
+
+  try{
+    const d=await apiFetch('/api/referral');
+
+    const activity=
+      Array.isArray(d.activity)
+        ? d.activity
+        : [];
+
+    const referrals=
+      Array.isArray(d.referrals)
+        ? d.referrals
+        : [];
+
+    const code=
+      d.referral_code ||
+      d.user?.referral_code ||
+      '';
+
+    const referralLink=
+      d.referral_link ||
+      '';
+
+    const referralRows=
+      referrals.length
+        ? referrals.map(r=>`
+            <div class="historyRow">
+              <div>
+                <b>${esc(
+                  r.first_name ||
+                  r.username ||
+                  r.telegram_id ||
+                  'User'
+                )}</b>
+                <small>
+                  ${esc(r.created_at||'')}
+                </small>
+              </div>
+            </div>
+          `).join('')
+        : '<div class="notice">No referrals yet.</div>';
+
+    const activityRows=
+      activity.length
+        ? activity.slice(0,10).map(a=>`
+            <div class="historyRow">
+              <div>
+                <b>${esc(
+                  a.type ||
+                  a.action ||
+                  'Referral activity'
+                )}</b>
+                <small>
+                  ${esc(a.created_at||'')}
+                </small>
+              </div>
+            </div>
+          `).join('')
+        : '<div class="notice">No referral activity yet.</div>';
+
+    document.getElementById('modalBody').innerHTML=`
+      <div class="premiumBox">
+
+        <label>Your Referral Code</label>
+
+        <div class="copyRow">
+          <input
+            class="field"
+            readonly
+            value="${esc(code)}"
+            id="referralCodeField"
+          >
+
+          <button
+            class="copyBtn"
+            onclick="copyReferralCode()"
+          >
+            Copy
+          </button>
+        </div>
+
+      </div>
+
+      ${
+        referralLink
+        ? `
+          <div class="premiumBox">
+            <label>Referral Link</label>
+
+            <div class="copyRow">
+              <input
+                class="field"
+                readonly
+                value="${esc(referralLink)}"
+                id="referralLinkField"
+              >
+
+              <button
+                class="copyBtn"
+                onclick="copyReferralLink()"
+              >
+                Copy
+              </button>
+            </div>
+          </div>
+        `
+        : ''
+      }
+
+      <div class="sectionLabel">
+        YOUR REFERRALS
+      </div>
+
+      ${referralRows}
+
+      <div class="sectionLabel">
+        REFERRAL ACTIVITY
+      </div>
+
+      ${activityRows}
+    `;
+
+  }catch(e){
+
+    const body=
+      document.getElementById('modalBody');
+
+    if(body){
+      body.innerHTML=
+        '<div class="notice">'+
+        esc(e.message||'Unable to load referral data')+
+        '</div>';
+    }
+  }
+}
+
+
+async function copyReferralCode(){
+
+  const v=
+    document.getElementById(
+      'referralCodeField'
+    )?.value||'';
+
+  if(!v){
+    showToast('Referral code unavailable');
+    return;
+  }
+
+  try{
+    await navigator.clipboard.writeText(v);
+    showToast('Referral code copied');
+  }catch(e){
+    showToast('Unable to copy referral code');
+  }
+}
+
+
+async function copyReferralLink(){
+
+  const v=
+    document.getElementById(
+      'referralLinkField'
+    )?.value||'';
+
+  if(!v){
+    showToast('Referral link unavailable');
+    return;
+  }
+
+  try{
+    await navigator.clipboard.writeText(v);
+    showToast('Referral link copied');
+  }catch(e){
+    showToast('Unable to copy referral link');
+  }
+}
 function navClick(el,n){document.querySelectorAll('.nav').forEach(x=>x.classList.remove('active'));el.classList.add('active');if(n==='Home'||n==='Nexora')return goHome();if(n==='Friend')openReferral();if(n==='NFT')openNFT();if(n==='Profile')openProfile();tg?.HapticFeedback?.selectionChanged()}
 setText('userName',telegramName());syncUser();setInterval(syncUser,30000);
 </script>
