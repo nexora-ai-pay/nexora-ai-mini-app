@@ -512,8 +512,91 @@ function socialIconSvg(key){if(key==='telegram')return '<svg viewBox="0 0 24 24"
 function socialButton(key,label,url,icon){const disabled=!url;return `<button class="socialBtn ${disabled?'disabled':''}" ${disabled?'onclick="showToast(\'Official '+label+' link will be connected here\')"':'onclick="openSocial(\''+key+'\')"'}><span class="socialIcon ${icon}">${socialIconSvg(icon)}</span><span>${label}</span></button>`}
 function openSocial(key){const url=SOCIAL_LINKS[key];if(!url)return showToast('Official link is not configured');if(tg?.openLink)tg.openLink(url);else window.open(url,'_blank')}
 function openSupport(){const url='https://t.me/NexoraAI_Pay_bot';if(tg?.openTelegramLink)tg.openTelegramLink(url);else window.open(url,'_blank')}
-function openCalculator(){openModal('Income Calculator','Calculate any amount with your chosen rates.',`<label>Capital / Amount (USDT)</label><input id="calcAmount" class="field" type="number" min="0" step="0.0001" value="${balance.toFixed(4)}"><label>Daily %</label><input id="calcDaily" class="field" type="number" min="0" step="0.01" value="0.06"><label>Monthly %</label><input id="calcMonthly" class="field" type="number" min="0" step="0.01" value="1.80"><div id="calcResult" class="notice">Press Calculate to view Daily %, Monthly %, Daily Income, Monthly Income and Total Income.</div><button class="primary" style="margin-top:10px" onclick="calculateIncome()">Calculate</button>`)}
-function calculateIncome(){const a=Math.max(0,Number(document.getElementById('calcAmount')?.value||0)),d=Math.max(0,Number(document.getElementById('calcDaily')?.value||0)),m=Math.max(0,Number(document.getElementById('calcMonthly')?.value||0));const di=a*d/100,mi=a*m/100,t=mi;const r=document.getElementById('calcResult');if(r)r.innerHTML=`<div style="display:grid;grid-template-columns:1fr 1fr;gap:7px"><div>Daily %<b style="display:block;color:#70ffa9">${d.toFixed(2)}%</b></div><div>Monthly %<b style="display:block;color:#70ffa9">${m.toFixed(2)}%</b></div><div>Daily Income<b style="display:block;color:#70ffa9">${di.toFixed(4)} USDT</b></div><div>Monthly Income<b style="display:block;color:#70ffa9">${mi.toFixed(4)} USDT</b></div><div style="grid-column:1/-1">Total Income<b style="display:block;color:#70ffa9;font-size:18px">${t.toFixed(4)} USDT</b></div></div>`}
+function openCalculator(){
+openModal(
+'Income Calculator',
+'Calculate any amount with your chosen rates.',
+'<label>Capital / Amount (USDT)</label>'+
+'<input id="calcAmount" class="field" type="number" min="0" step="0.0001" value="${balance.toFixed(4)}">'+
+
+'<label>Daily %</label>'+
+'<input id="calcDaily" class="field" oninput="syncCalculatorRates()" onchange="syncCalculatorRates()" type="number" min="0" step="0.01" value="10" oninput="syncCalculatorRates()">'+
+
+'<label>Monthly %</label>'+
+'<input id="calcMonthly" class="field" type="number" min="0" step="0.01" value="300" readonly style="opacity:.8;cursor:not-allowed">'+
+
+'<div id="calcResult" class="calcResults">'+
+'<div class="calcRow"><span>Daily %</span><b id="resDaily">0.00%</b></div>'+
+'<div class="calcRow"><span>Monthly %</span><b id="resMonthly">0.00%</b></div>'+
+'<div class="calcRow"><span>Daily Income</span><b id="resDailyIncome">0.0000 USDT</b></div>'+
+'<div class="calcRow"><span>Monthly Income</span><b id="resMonthlyIncome">0.0000 USDT</b></div>'+
+'<div class="calcRow"><span>Total Income</span><b id="resTotalIncome">0.0000 USDT</b></div>'+
+'</div>'+
+'<button class="primary" style="margin-top:12px" onclick="calculateIncome()">Calculate</button>'
+);
+
+syncCalculatorRates();
+calculateIncome();
+}
+
+function syncCalculatorRates(){
+const d=Math.max(0,Number(document.getElementById('calcDaily')?.value||0));
+const m=d*30;
+const monthly=document.getElementById('calcMonthly');
+if(monthly) monthly.value=m.toFixed(2);
+}
+
+function bindCalculatorAutoRate(){
+const daily=document.getElementById('calcDaily');
+if(!daily) return;
+daily.oninput=syncCalculatorRates;
+daily.onchange=syncCalculatorRates;
+syncCalculatorRates();
+}
+bindCalculatorAutoRate();
+
+
+document.addEventListener('input',function(e){
+if(e.target && e.target.id==='calcDaily'){
+const daily=Math.max(0,Number(e.target.value||0));
+const monthly=document.getElementById('calcMonthly');
+if(monthly) monthly.value=(daily*30).toFixed(2);
+}
+});
+
+document.addEventListener('change',function(e){
+if(e.target && e.target.id==='calcDaily'){
+const daily=Math.max(0,Number(e.target.value||0));
+const monthly=document.getElementById('calcMonthly');
+if(monthly) monthly.value=(daily*30).toFixed(2);
+}
+});
+
+function calculateIncome(){
+syncCalculatorRates();
+
+const a=Math.max(0,Number(document.getElementById('calcAmount')?.value||0));
+const d=Math.max(0,Number(document.getElementById('calcDaily')?.value||0));
+const m=d*30;
+
+const dailyIncome=a*d/100;
+const monthlyIncome=a*m/100;
+const totalIncome=monthlyIncome;
+
+const rd=document.getElementById('resDaily');
+const rm=document.getElementById('resMonthly');
+const rdi=document.getElementById('resDailyIncome');
+const rmi=document.getElementById('resMonthlyIncome');
+const rt=document.getElementById('resTotalIncome');
+
+if(rd) rd.textContent=d.toFixed(2)+'%';
+if(rm) rm.textContent=m.toFixed(2)+'%';
+if(rdi) rdi.textContent=dailyIncome.toFixed(4)+' USDT';
+if(rmi) rmi.textContent=monthlyIncome.toFixed(4)+' USDT';
+if(rt) rt.textContent=totalIncome.toFixed(4)+' USDT';
+}
+
+
 function openNFT(){const filters=['All','Common','Rare','Epic','Legendary','Mythic'];const fs=filters.map((x,i)=>`<button class="filter ${i===0?'active':''}" data-filter="${x}" onclick="filterNFT('${x}',this)">${x}</button>`).join('');openModal('NFT Collection','Own • Earn • Grow — choose a Nexora AI NFT plan using your available backend USDT balance.',`<div class="nftScroll"><div class="nftHero"><img src="${LOGO}" alt=""><div><h3>Nexora NFT Collection</h3><p>9 premium tiers • fixed plan details • backend purchase</p></div><div class="tiers"><b>9</b>Tiers</div></div><div class="filters">${fs}</div><div id="nftGrid" class="nftGrid">${NFT_CARDS}</div><div class="myPurchases" onclick="loadNFTPurchases()">▣ &nbsp; My NFT Purchases <span>›</span></div><div id="purchaseList" class="purchaseList"></div></div>`,'nftModal')}
 function filterNFT(r,b){document.querySelectorAll('.filter').forEach(x=>x.classList.remove('active'));b.classList.add('active');document.querySelectorAll('.nftCard').forEach(c=>c.classList.toggle('hidden',r!=='All'&&!c.classList.contains('rarity-'+r.toLowerCase())))}
 async function buyNFT(id){const p=NFT_PLANS.find(x=>x.id===id);if(!p)return;if(balance<p.price){showToast(`Insufficient balance for ${p.name}`);return}if(!confirm(`Buy ${p.name} NFT for ${p.price.toFixed(2)} USDT?`))return;try{const d=await apiFetch('/api/nft/purchase',{method:'POST',body:JSON.stringify({nft_id:id,client_request_id:'NFT-'+Date.now()+'-'+Math.random().toString(36).slice(2)})});if(d.user)applyUser(d.user);showToast(`${p.name} purchased successfully`);loadNFTPurchases()}catch(e){showToast(e.message||'NFT purchase failed')}}
