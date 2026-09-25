@@ -459,7 +459,7 @@ async function copyPaymentDepositAddress(){
     );
   }
 }
-async functin openReferral(){
+async function openReferral(){
   openModal('Referral Program','Invite • Track • Earn 5% on successful NFT purchases',`<div class="notice">Loading referral activity...</div>`);
   try{
     const d=await apiFetch('/api/referral');
