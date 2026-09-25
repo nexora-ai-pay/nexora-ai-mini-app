@@ -86,7 +86,59 @@ button,input{font:inherit}button{color:inherit}
   color:#9affc7;
   font-size:15px;
 }
-\n</style>
+\n
+/* NEXORA PREMIUM CALCULATOR ROWS */
+.calcResults{
+  display:flex;
+  flex-direction:column;
+  gap:9px;
+  margin-top:14px;
+}
+.calcRow{
+  display:flex !important;
+  align-items:center;
+  justify-content:space-between;
+  width:100%;
+  min-height:46px;
+  padding:12px 14px;
+  box-sizing:border-box;
+  border:1px solid rgba(72,255,165,.30);
+  border-radius:14px;
+  background:linear-gradient(135deg,rgba(4,55,35,.88),rgba(0,25,16,.96));
+  box-shadow:
+    inset 0 0 14px rgba(90,255,180,.04),
+    0 3px 14px rgba(0,0,0,.22);
+}
+.calcRow span{
+  color:#b8d8ca;
+  font-size:13px;
+  font-weight:600;
+  letter-spacing:.2px;
+}
+.calcRow b{
+  color:#79ffb5;
+  font-size:14px;
+  font-weight:800;
+  text-align:right;
+  white-space:nowrap;
+}
+.calcRow:last-child{
+  border-color:rgba(113,255,178,.58);
+  background:linear-gradient(135deg,rgba(9,82,50,.96),rgba(1,37,23,.99));
+  box-shadow:
+    inset 0 0 18px rgba(90,255,180,.07),
+    0 0 16px rgba(65,255,160,.12);
+}
+.calcRow:last-child span{
+  color:#d9f8e9;
+  font-weight:700;
+}
+.calcRow:last-child b{
+  color:#9affc7;
+  font-size:15px;
+}
+
+</style>
 </head>
 <body>
 <div class="app">
