@@ -358,46 +358,40 @@ function showDepositPayment(uniqueAmount,address){
 }
 
 
-function renderPaymentQR(address,amount){
+function renderPaymentQR(address, amount){
 
-  const box=document.getElementById(
-    'paymentDepositQR'
-  );
+  const box = document.getElementById('paymentDepositQR');
 
-  if(!box)return;
+  if(!box) return;
 
-  box.innerHTML='';
+  box.innerHTML = '';
 
-  const uri=
-    'ethereum:'+
-    address+
-    '@'+
-    BEP20_CHAIN_ID+
-    '/transfer?address='+
-    BEP20_USDT_CONTRACT+
-    '&uint256='+
-    Math.round(amount*1e18);
+  const qrText = String(address || '').trim();
 
-  if(typeof QRCode!=='undefined'){
+  if(!/^0x[a-fA-F0-9]{40}$/.test(qrText)){
+    box.innerHTML =
+      '<div style="padding:18px;text-align:center">QR unavailable</div>';
+    return;
+  }
 
-    new QRCode(box,{
-      text:uri,
-      width:190,
-      height:190,
-      colorDark:'#063821',
-      colorLight:'#effff5',
-      correctLevel:QRCode.CorrectLevel.M
+  if(typeof QRCode !== 'undefined'){
+
+    new QRCode(box, {
+      text: qrText,
+      width: 260,
+      height: 260,
+      colorDark: '#063821',
+      colorLight: '#eafff4',
+      correctLevel: QRCode.CorrectLevel.H
     });
 
   }else{
 
-    box.innerHTML=
-      '<div style="padding:18px;text-align:center">'+
-      'QR unavailable'+
-      '</div>';
+    box.innerHTML =
+      '<div style="padding:18px;text-align:center">QR unavailable</div>';
+
   }
 }
-
 
 async function copyDepositAmount(){
 
