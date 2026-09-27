@@ -310,7 +310,217 @@ function showToast(m){const t=document.getElementById('toast');if(!t)return;t.te
 function goHome(){closeModal();window.scrollTo({top:0,behavior:'smooth'})}
 function openEarning(){openModal('Earning USDT','Current backend balance',`<div class="notice">Available backend balance: <b style="color:#70ffa9">${balance.toFixed(4)} USDT</b><br><br>The automatic earning-credit engine is not enabled in the current backend, so the UI does not fabricate earnings.</div>`)}
 function openClaim(){openModal('Claim Rewards','Secure claim status',`<div class="notice">Claim UI is ready. No balance is increased until a verified backend claim endpoint is enabled.</div>`)}
-function openMining(){openModal('Live Mining','AI Mining Engine',`<div class="mine"><div class="mineRow"><div class="bolt">ϟ</div><div style="flex:1"><div class="mineName">AI Mining Engine</div><div class="mineSub">Live interface • backend earning engine pending</div></div><span class="live">● LIVE</span></div></div>`)}
+
+let miningTimerInterval = window.__nexoraMiningTimer || null;
+let miningRefreshRunning = false;
+
+function formatMiningTime(ms){
+  if (!Number.isFinite(ms) || ms <= 0) return "00:00:00";
+
+  const totalSeconds = Math.floor(ms / 1000);
+  const hours = Math.floor(totalSeconds / 3600);
+  const minutes = Math.floor((totalSeconds % 3600) / 60);
+  const seconds = totalSeconds % 60;
+
+  return [hours, minutes, seconds]
+    .map(v => String(v).padStart(2, "0"))
+    .join(":");
+}
+
+async function refreshMiningData(){
+  if (miningRefreshRunning) return;
+  miningRefreshRunning = true;
+
+  try{
+    const d = await apiFetch('/api/nft/mining');
+    const mining = Array.isArray(d.mining) ? d.mining : [];
+
+    const container = document.getElementById('liveMiningList');
+    if (!container) return;
+
+    if (!mining.length){
+      container.innerHTML =
+        '<div class="notice">No active NFT mining found.</div>';
+      return;
+    }
+
+    container.innerHTML = mining.map((p, index) => {
+      const next = p.next_mining_at
+        ? new Date(p.next_mining_at).getTime()
+        : 0;
+
+      const remaining =
+        next > Date.now() ? formatMiningTime(next - Date.now()) : "00:00:00";
+
+      const daily = Number(p.daily_earning || 0).toFixed(2);
+      const mined = Number(p.mined_cycles || 0);
+      const total = Number(p.duration_days || 0);
+      const status = p.status === "completed" ? "COMPLETED" : "MINING";
+
+      return `
+        <div class="liveMiningCard" data-next-mining="${next}" data-id="${esc(String(p.id || index))}">
+          <div class="liveMiningTop">
+            <div>
+              <div class="liveMiningName">${esc(p.nft_name || "NFT")}</div>
+              <div class="liveMiningSub">
+                ${Number(p.price || 0).toFixed(2)} USDT • ${Number(p.daily_rate || 0).toFixed(2)}% Daily
+              </div>
+            </div>
+            <span class="liveMiningStatus">${status}</span>
+          </div>
+
+          <div class="liveMiningTimer" data-timer="${esc(String(p.id || index))}">
+            ${status === "COMPLETED" ? "COMPLETED" : remaining}
+          </div>
+
+          <div class="liveMiningBottom">
+            <span>Daily Earning</span>
+            <strong>${daily} USDT</strong>
+          </div>
+
+          <div class="liveMiningBottom">
+            <span>Mining Days</span>
+            <strong>${mined} / ${total}</strong>
+          </div>
+        </div>
+      `;
+    }).join("");
+
+    if (typeof syncUser === "function"){
+      await syncUser();
+    }
+
+  }catch(e){
+    console.error("Mining refresh failed:", e);
+  }finally{
+    miningRefreshRunning = false;
+  }
+}
+
+function startMiningTimer(){
+  if (miningTimerInterval) clearInterval(miningTimerInterval);
+
+  miningTimerInterval = setInterval(async () => {
+    const cards = document.querySelectorAll(".liveMiningCard");
+    let shouldRefresh = false;
+
+    cards.forEach(card => {
+      const next = Number(card.dataset.nextMining || 0);
+      const timer = card.querySelector("[data-timer]");
+
+      if (!timer || !next) return;
+
+      const remaining = next - Date.now();
+
+      if (remaining <= 0){
+        timer.textContent = "00:00:00";
+        shouldRefresh = true;
+      }else{
+        timer.textContent = formatMiningTime(remaining);
+      }
+    });
+
+    if (shouldRefresh){
+      await refreshMiningData();
+    }
+  }, 1000);
+
+  window.__nexoraMiningTimer = miningTimerInterval;
+}
+
+async function openMining(){
+  openModal(
+    'Live Mining',
+    'AI Mining Engine',
+    `
+      <div class="mine">
+        <div class="mineRow">
+          <div class="bolt">⚡</div>
+          <div style="flex:1">
+            <div class="mineName">AI Mining Engine</div>
+            <div class="mineSub">
+              Live backend mining • 24-hour cycle
+            </div>
+          </div>
+          <span class="live">● LIVE</span>
+        </div>
+
+        <div id="liveMiningList">
+          <div class="notice">Loading live mining...</div>
+        </div>
+      </div>
+
+      <style>
+        .liveMiningCard{
+          margin-top:12px;
+          padding:14px;
+          border:1px solid rgba(112,250,169,.35);
+          border-radius:16px;
+          background:linear-gradient(145deg,rgba(20,40,30,.96),rgba(7,15,11,.96));
+          box-shadow:0 0 18px rgba(65,220,130,.10);
+        }
+
+        .liveMiningTop{
+          display:flex;
+          align-items:center;
+          justify-content:space-between;
+          gap:10px;
+        }
+
+        .liveMiningName{
+          color:#f4d37b;
+          font-size:18px;
+          font-weight:800;
+        }
+
+        .liveMiningSub{
+          margin-top:4px;
+          color:#9aa99f;
+          font-size:12px;
+        }
+
+        .liveMiningStatus{
+          padding:5px 9px;
+          border-radius:10px;
+          font-size:10px;
+          font-weight:800;
+          color:#79f5a6;
+          border:1px solid rgba(121,245,166,.35);
+        }
+
+        .liveMiningTimer{
+          margin:14px 0 12px;
+          text-align:center;
+          font-size:32px;
+          line-height:1;
+          font-weight:900;
+          letter-spacing:2px;
+          color:#f4d37b;
+          text-shadow:0 0 14px rgba(244,211,123,.18);
+        }
+
+        .liveMiningBottom{
+          display:flex;
+          justify-content:space-between;
+          padding-top:8px;
+          margin-top:8px;
+          border-top:1px solid rgba(255,255,255,.06);
+          color:#aebbb3;
+          font-size:12px;
+        }
+
+        .liveMiningBottom strong{
+          color:#79f5a6;
+          font-size:13px;
+        }
+      </style>
+    `
+  );
+
+  await refreshMiningData();
+  startMiningTimer();
+}
+
 function formatHistoryDate(value){
   const d = new Date(value);
   if (Number.isNaN(d.getTime())) return "Date unavailable";
@@ -821,7 +1031,60 @@ if(rt) rt.textContent=totalIncome.toFixed(4)+' USDT';
 function openNFT(){const filters=['All','Common','Rare','Epic','Legendary','Mythic'];const fs=filters.map((x,i)=>`<button class="filter ${i===0?'active':''}" data-filter="${x}" onclick="filterNFT('${x}',this)">${x}</button>`).join('');openModal('NFT Collection','Own • Earn • Grow — choose a Nexora AI NFT plan using your available backend USDT balance.',`<div class="nftScroll"><div class="nftHero"><img src="${LOGO}" alt=""><div><h3>Nexora NFT Collection</h3><p>9 premium tiers • fixed plan details • backend purchase</p></div><div class="tiers"><b>9</b>Tiers</div></div><div class="filters">${fs}</div><div id="nftGrid" class="nftGrid">${NFT_CARDS}</div><div class="myPurchases" onclick="loadNFTPurchases()">▣ &nbsp; My NFT Purchases <span>›</span></div><div id="purchaseList" class="purchaseList"></div></div>`,'nftModal')}
 function filterNFT(r,b){document.querySelectorAll('.filter').forEach(x=>x.classList.remove('active'));b.classList.add('active');document.querySelectorAll('.nftCard').forEach(c=>c.classList.toggle('hidden',r!=='All'&&!c.classList.contains('rarity-'+r.toLowerCase())))}
 async function buyNFT(id){const p=NFT_PLANS.find(x=>x.id===id);if(!p)return;if(balance<p.price){showToast(`Insufficient balance for ${p.name}`);return}if(!confirm(`Buy ${p.name} NFT for ${p.price.toFixed(2)} USDT?`))return;try{const d=await apiFetch('/api/nft/purchase',{method:'POST',body:JSON.stringify({nft_id:id,client_request_id:'NFT-'+Date.now()+'-'+Math.random().toString(36).slice(2)})});if(d.user)applyUser(d.user);showToast(`${p.name} purchased successfully`);loadNFTPurchases()}catch(e){showToast(e.message||'NFT purchase failed')}}
-async function loadNFTPurchases(){const e=document.getElementById('purchaseList');if(!e)return;e.innerHTML='<div class="notice">Loading purchases...</div>';try{const d=await apiFetch('/api/nft/purchases');const rows=d.purchases||[];e.innerHTML=rows.length?rows.map(p=>`<div class="notice" style="margin-bottom:6px"><b>${esc(p.nft_name||p.name||'NFT')}</b> · ${Number(p.price||0).toFixed(2)} USDT<br><small>${esc(p.created_at||'')}</small></div>`).join(''):'<div class="notice">No NFT purchases yet.</div>'}catch(e){e.innerHTML='<div class="notice">'+esc(e.message)+'</div>'}}
+
+async function loadNFTPurchases(){
+  const el = document.getElementById('purchaseList');
+  if (!el) return;
+
+  el.innerHTML = '<div class="notice">Loading purchases...</div>';
+
+  try{
+    const d = await apiFetch('/api/nft/purchases');
+    const rows = Array.isArray(d.purchases) ? d.purchases : [];
+
+    if (!rows.length){
+      el.innerHTML = '<div class="notice">No NFT purchases yet.</div>';
+      return;
+    }
+
+    el.innerHTML = rows.map(p => {
+      const name = p.nft_name || p.name || 'NFT';
+      const price = Number(p.price || 0).toFixed(2);
+      const rate = Number(p.daily_rate || 0).toFixed(2);
+      const duration = Number(p.duration_days || 0);
+
+      const purchaseDate =
+        p.purchased_at || p.created_at || p.date || null;
+
+      const formattedDate =
+        typeof formatHistoryDate === "function"
+          ? formatHistoryDate(purchaseDate)
+          : "Date unavailable";
+
+      const status = p.status || "active";
+
+      return `
+        <div class="notice" style="margin-bottom:8px;text-align:left">
+          <b style="color:#f4d37b">${esc(name)}</b><br>
+          <span>
+            ${price} USDT • ${duration} Days • ${rate}% Daily
+          </span><br>
+          <small style="color:#9aa99f">
+            Purchased: ${esc(formattedDate)}
+          </small><br>
+          <small style="color:#79f5a6;text-transform:capitalize">
+            Status: ${esc(status)}
+          </small>
+        </div>
+      `;
+    }).join('');
+
+  }catch(e){
+    el.innerHTML =
+      '<div class="notice">' + esc(e.message || "Failed to load NFT purchases") + '</div>';
+  }
+}
+
 async function openReferral(){
   openModal(
     'Referral Program',
