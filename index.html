@@ -708,7 +708,7 @@ async function openReferral(){
     const activity=Array.isArray(d.activity)?d.activity:[];
     const referrals=Array.isArray(d.referrals)?d.referrals:[];
     const activityHtml=activity.length?activity.slice(0,10).map(x=>`<div class="historyRow"><div><b>${esc(x.type||x.event||'Referral activity')}</b><small>${esc(x.created_at||x.date||'')}</small></div><span class="statusPill">${Number(x.amount||x.commission||0).toFixed(4)} USDT</span></div>`).join(''):'No referral activity yet.';
-    const referralHtml=referrals.length?referrals.slice(0,10).map(x=>`<div class="historyRow"><div><b>${esc(x.name||x.username||'Referral')}</b><small>${esc(x.created_at||'')}</small></div><span class="statusPill">${esc(x.status||'ACTIVE')}</span></div>`).join(''):'No referred members yet.';
+    const referralHtml=referrals.length?referrals.slice(0,10).map(x=>`<div class="historyRow"><div><b>${esc(x.name||x.username||'Referral')}</b><small>${formatHistoryDate(x.created_at)}</small></div><span class="statusPill">${esc(x.status||'ACTIVE')}</span></div>`).join(''):'No referred members yet.';
     openModal('Referral Program','Invite • Track • Earn 5% on successful NFT purchases',`
       <div class="refStats"><div><small>Referral Code</small><b>${esc(d.referral_code||'')}</b></div><div><small>Referrals</small><b>${Number(d.referral_count||referrals.length||0)}</b></div><div><small>NFT Commission</small><b>${Number(d.total_commission||0).toFixed(4)} USDT</b></div><div><small>Total Referral Earnings</small><b>${Number(d.total_earned||d.total_referral_earnings||d.total_commission||0).toFixed(4)} USDT</b></div></div>
       <button class="primary" onclick="copyText('${esc(d.referral_code||'')}')">Copy Referral Code</button>
@@ -742,7 +742,7 @@ async function loadWithdrawalHistory(){
   try{
     const d=await apiFetch('/api/withdrawals');
     const rows=Array.isArray(d.withdrawals)?d.withdrawals:[];
-    e.innerHTML=rows.length?rows.slice(0,20).map(x=>`<div class="historyRow"><div><b>${Number(x.amount||0).toFixed(4)} USDT</b><small>${esc(x.created_at||'')}</small><small>${esc(x.network||'BEP-20')} • ${esc(x.asset||'USDT')}</small></div><span class="statusPill">${esc(x.status||'pending')}</span></div>`).join(''):'No withdrawal records yet.';
+    e.innerHTML=rows.length?rows.slice(0,20).map(x=>`<div class="historyRow"><div><b>${Number(x.amount||0).toFixed(4)} USDT</b><small>${formatHistoryDate(x.created_at)}</small><small>${esc(x.network||'BEP-20')} • ${esc(x.asset||'USDT')}</small></div><span class="statusPill">${esc(x.status||'pending')}</span></div>`).join(''):'No withdrawal records yet.';
   }catch(err){
     e.textContent='Unable to load withdrawal history right now.';
   }
