@@ -827,6 +827,7 @@ async function openDeposit(){
               <div>
                 <b>${Number(x.amount||0).toFixed(6)} USDT</b>
                 <small>${formatHistoryDate(x.created_at)}</small>
+                ${x.tx_hash?`<small>TX: ${esc(String(x.tx_hash).slice(0,18))}…</small>`:''}
               </div>
               <span class="statusPill">
                 ${esc(x.status||'pending')}
@@ -1162,7 +1163,7 @@ async function loadWithdrawalHistory(){
   try{
     const d=await apiFetch('/api/withdrawals');
     const rows=Array.isArray(d.withdrawals)?d.withdrawals:[];
-    e.innerHTML=rows.length?rows.slice(0,20).map(x=>`<div class="historyRow"><div><b>${Number(x.amount||0).toFixed(4)} USDT</b><small>${formatHistoryDate(x.created_at)}</small><small>${esc(x.network||'BEP-20')} • ${esc(x.asset||'USDT')}</small></div><span class="statusPill">${esc(x.status||'pending')}</span></div>`).join(''):'No withdrawal records yet.';
+    e.innerHTML=rows.length?rows.slice(0,20).map(x=>`<div class="historyRow"><div><b>${Number(x.amount||0).toFixed(4)} USDT</b><small>${formatHistoryDate(x.created_at)}</small><small>${esc(x.network||'BEP-20')} • ${esc(x.asset||'USDT')}</small>${x.tx_hash?`<small>TX: ${esc(String(x.tx_hash).slice(0,18))}…</small>`:''}</div><span class="statusPill">${esc(x.status||'pending')}</span></div>`).join(''):'No withdrawal records yet.';
   }catch(err){
     e.textContent='Unable to load withdrawal history right now.';
   }
@@ -1179,7 +1180,17 @@ function openProfile(){const n=esc([currentUser?.first_name,currentUser?.last_na
 function socialIconSvg(key){if(key==='telegram')return '<svg viewBox="0 0 24 24" fill="white"><path d="m21.6 4.3-3.1 14.6c-.2 1-0.8 1.2-1.6.8l-4.4-3.2-2.1 2c-.2.2-.4.4-.8.4l.3-4.5 8.2-7.4c.4-.3-.1-.5-.6-.2L7.4 12.9 3 11.5c-1-.3-1-1 .2-1.4L20.3 3.4c.8-.3 1.5.2 1.3.9Z"/></svg>';if(key==='twitter')return '<svg viewBox="0 0 24 24" fill="white"><path d="M18.9 2H22l-6.8 7.8L23.2 22h-6.4l-5-6.4L6.2 22H3.1l7.2-8.3L2.8 2h6.6l4.5 5.8L18.9 2Zm-1.1 17.5h1.8L8.3 4.4H6.4l11.4 15.1Z"/></svg>';if(key==='facebook')return '<svg viewBox="0 0 24 24" fill="white"><path d="M13.6 22v-8h2.7l.4-3.1h-3.1V8.9c0-.9.3-1.6 1.7-1.6h1.8V4.5c-.3 0-1.4-.1-2.7-.1-2.7 0-4.6 1.6-4.6 4.7v1.8H7v3.1h2.8v8h3.8Z"/></svg>';if(key==='instagram')return '<svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2"><rect x="3.5" y="3.5" width="17" height="17" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r="1" fill="white" stroke="none"/></svg>';return '<svg viewBox="0 0 24 24" fill="white"><path d="M21.6 7.2a2.8 2.8 0 0 0-2-2C17.8 4.7 12 4.7 12 4.7s-5.8 0-7.6.5a2.8 2.8 0 0 0-2 2C1.9 9 1.9 12 1.9 12s0 3 .5 4.8a2.8 2.8 0 0 0 2 2c1.8.5 7.6.5 7.6.5s5.8 0 7.6-.5a2.8 2.8 0 0 0 2-2c.5-1.8.5-4.8.5-4.8s0-3-.5-4.8ZM10 15.5v-7l6 3.5-6 3.5Z"/></svg>'}
 function socialButton(key,label,url,icon){const disabled=!url;return `<button class="socialBtn ${disabled?'disabled':''}" ${disabled?'onclick="showToast(\'Official '+label+' link will be connected here\')"':'onclick="openSocial(\''+key+'\')"'}><span class="socialIcon ${icon}">${socialIconSvg(icon)}</span><span>${label}</span></button>`}
 function openSocial(key){const url=SOCIAL_LINKS[key];if(!url)return showToast('Official link is not configured');if(tg?.openLink)tg.openLink(url);else window.open(url,'_blank')}
-function openSupport(){const url='https://t.me/NexoraAI_Pay_bot';if(tg?.openTelegramLink)tg.openTelegramLink(url);else window.open(url,'_blank')}
+async function openSupport(){
+  try{
+    const d=await apiFetch('/api/support/config');
+    const url=String(d.bot_url||'').trim();
+    if(!url) throw new Error('Support bot is not configured');
+    if(tg?.openTelegramLink) tg.openTelegramLink(url+'?start=support');
+    else window.open(url+'?start=support','_blank');
+  }catch(e){
+    showToast(e.message||'Support Help Team is temporarily unavailable');
+  }
+}
 function openCalculator(){
 openModal(
 'Income Calculator',
