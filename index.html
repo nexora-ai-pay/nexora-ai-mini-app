@@ -1376,7 +1376,7 @@ async function openReferral(){
             <div class="historyRow">
               <div>
                 <b>${esc(r.first_name||r.username||r.telegram_id||'User')}</b>
-                <small>${esc(r.created_at||'')}</small>
+                <small>${esc(formatHistoryDate(r.created_at))}</small>
               </div>
               <span class="statusPill">${esc(r.status||'ACTIVE')}</span>
             </div>
@@ -1389,7 +1389,7 @@ async function openReferral(){
             <div class="historyRow">
               <div>
                 <b>${esc(a.type||a.action||'Referral activity')}</b>
-                <small>${esc(a.created_at||'')}</small>
+                <small>${esc(formatHistoryDate(a.created_at))}</small>
               </div>
               <span class="statusPill">${Number(a.amount||a.commission||0).toFixed(4)} USDT</span>
             </div>
