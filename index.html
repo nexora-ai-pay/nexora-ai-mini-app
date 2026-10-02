@@ -1224,16 +1224,10 @@ async function openSupport(){
     showToast(e.message||'Support Help Team is temporarily unavailable');
   }
 }
-async function openPayoutReview(){
-  try{
-    const d=await apiFetch('/api/payout-review/config');
-    const url=String(d.bot_url||'').trim();
-    if(!url) throw new Error('Payout Review bot is not configured');
-    if(tg?.openTelegramLink) tg.openTelegramLink(url+'?start=payout');
-    else window.open(url+'?start=payout','_blank');
-  }catch(e){
-    showToast(e.message||'Payout Review bot is temporarily unavailable');
-  }
+function openPayoutReview(){
+  const url='https://t.me/NexoraAIPayoutReview';
+  if(tg?.openTelegramLink) tg.openTelegramLink(url);
+  else window.open(url,'_blank');
 }
 function openCalculator(){
 openModal(
