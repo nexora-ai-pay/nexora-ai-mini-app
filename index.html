@@ -1323,7 +1323,7 @@ async function openReferral(){
 
     const referralLink=
       d.referral_link ||
-      (code ? ('https://t.me/NexoraAI_Pay_bot?startapp='+encodeURIComponent(code)) : '');
+      (code ? ('https://t.me/NexoraAI_Pay_bot?start='+encodeURIComponent(code)) : '');
 
     const referralRows=
       referrals.length
