@@ -339,7 +339,7 @@ function setText(id,v){const e=document.getElementById(id);if(e)e.textContent=St
 function esc(v){return String(v??'').replace(/[&<>'"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[c]))}
 function initData(){return tg?.initData||''}
 async function apiFetch(path,opt={}){const d=initData();if(!d)throw new Error('Please open Nexora AI from Telegram.');const headers={'Content-Type':'application/json','X-Telegram-Init-Data':d,...(opt.headers||{})};const r=await fetch(API_BASE+path,{...opt,headers});let x={};try{x=await r.json()}catch(e){}if(!r.ok||x.success===false)throw new Error(x.message||`Request failed (${r.status})`);return x}
-const SOCIAL_LINKS={twitter:'',facebook:'',instagram:'',youtube:''};
+const SOCIAL_LINKS={twitter:'https://x.com/Nexora_ai_pay',facebook:'https://www.facebook.com/share/1KWrpVcdYt/',instagram:'https://www.instagram.com/nexora_ai_official_channel',youtube:'https://youtube.com/@nexora_ai_official_channel'};
 const NEXORA_DEPOSIT_ADDRESS='';
 const BEP20_USDT_CONTRACT='0x55d398326f99059fF775485246999027B3197955';
 const BEP20_CHAIN_ID='56';
@@ -1202,7 +1202,7 @@ function openProfile(){
 
     <div class="sectionLabel">Join Our Channels</div>
     <div class="socialGrid">
-      ${socialButton('telegram','Telegram','https://t.me/NexoraAI_Pay_bot','telegram')}
+      ${socialButton('telegram','Telegram','https://t.me/nexora_ai_pay','telegram')}
       ${socialButton('twitter','Twitter / X',SOCIAL_LINKS.twitter,'twitter')}
       ${socialButton('facebook','Facebook',SOCIAL_LINKS.facebook,'facebook')}
       ${socialButton('instagram','Instagram',SOCIAL_LINKS.instagram,'instagram')}
