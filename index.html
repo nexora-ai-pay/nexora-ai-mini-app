@@ -492,15 +492,39 @@ function goHome(){closeModal();window.scrollTo({top:0,behavior:'smooth'})}
 let freeEarnTimerInterval=window.__nexoraFreeEarnTimer||null;
 let freeEarnState={amount:.003,referralReward:.02,available:false,remainingMs:0,nextClaimAt:null,totalClaims:0,totalEarned:0,referralRewardCount:0,referralRewardTotal:0,referralCount:0};
 function formatFreeEarnTime(ms){if(!Number.isFinite(ms)||ms<=0)return"READY";const s=Math.ceil(ms/1000),h=Math.floor(s/3600),m=Math.floor((s%3600)/60),x=s%60;return[h,m,x].map(v=>String(v).padStart(2,"0")).join(":")}
-function freeEarnRemainingFromClock(){if(!freeEarnState.nextClaimAt)return Math.max(0,Number(freeEarnState.remainingMs||0));const t=Date.parse(freeEarnState.nextClaimAt);return Number.isFinite(t)?Math.max(0,t-Date.now()):Math.max(0,Number(freeEarnState.remainingMs||0))}
-function updateFreeEarnBanner(){freeEarnState.remainingMs=freeEarnRemainingFromClock();const e=document.getElementById("freeEarnBannerTimer");if(e)e.textContent=freeEarnState.available?"READY":formatFreeEarnTime(freeEarnState.remainingMs);const st=document.querySelector(".freeEarnStatus");const b=document.getElementById("freeEarnClaimBtn");if(st)st.textContent=freeEarnState.available?"Your daily reward is ready to claim.":"Next reward in "+formatFreeEarnTime(freeEarnState.remainingMs);if(b){b.disabled=!freeEarnState.available;b.textContent=freeEarnState.available?"Claim "+freeEarnState.amount.toFixed(3)+" USDT":"Next Claim • "+formatFreeEarnTime(freeEarnState.remainingMs)}}
-function startFreeEarnTimer(){if(freeEarnTimerInterval)clearInterval(freeEarnTimerInterval);freeEarnTimerInterval=setInterval(async()=>{const left=freeEarnRemainingFromClock();if(left>0){freeEarnState.available=false;freeEarnState.remainingMs=left;updateFreeEarnBanner();return}if(!freeEarnState.available){try{await loadFreeEarningData()}catch(e){freeEarnState.available=false;freeEarnState.remainingMs=1000;updateFreeEarnBanner()}}else updateFreeEarnBanner()},1000);window.__nexoraFreeEarnTimer=freeEarnTimerInterval}
-async function loadFreeEarningData(){const d=await apiFetch("/api/free-earning");freeEarnState.amount=Number(d.daily_amount||.003);freeEarnState.referralReward=Number(d.referral_reward||.02);freeEarnState.available=Boolean(d.available);freeEarnState.remainingMs=Number(d.remaining_ms||0);freeEarnState.nextClaimAt=d.next_claim_at||null;freeEarnState.totalClaims=Number(d.total_claims||0);freeEarnState.totalEarned=Number(d.total_free_earned||0);freeEarnState.referralRewardCount=Number(d.referral_reward_count||0);freeEarnState.referralRewardTotal=Number(d.referral_reward_total||0);freeEarnState.referralCount=Number(d.referral_count||0);if(!freeEarnState.available&&freeEarnState.nextClaimAt)freeEarnState.remainingMs=freeEarnRemainingFromClock();updateFreeEarnBanner();startFreeEarnTimer();return d}
-async function claimFreeEarning(){const b=document.getElementById("freeEarnClaimBtn");if(b)b.disabled=true;try{if(!freeEarnState.available){await loadFreeEarningData();if(!freeEarnState.available){showToast("Your next Free Earning is not ready yet");return}}const d=await apiFetch("/api/free-earning/claim",{method:"POST"});balance=Number(d.balance||balance);setText("balance",balance.toFixed(4));const usd=document.getElementById("usd");if(usd)usd.textContent=balance.toFixed(2);showToast("+"+Number(d.amount||.003).toFixed(3)+" USDT credited");await loadFreeEarningData();if(document.getElementById("modal")?.classList.contains("show"))await renderFreeEarningModal()}catch(e){showToast(e.message||"Free Earning is not available yet");try{await loadFreeEarningData()}catch(_){}}finally{const btn=document.getElementById("freeEarnClaimBtn");if(btn)btn.disabled=!freeEarnState.available}}
+function updateFreeEarnBanner(){const e=document.getElementById("freeEarnBannerTimer");if(e)e.textContent=freeEarnState.available?"READY":formatFreeEarnTime(freeEarnState.remainingMs)}
+function startFreeEarnTimer(){
+  if(freeEarnTimerInterval)clearInterval(freeEarnTimerInterval);
+
+  const tick=()=>{
+    if(freeEarnState.nextClaimAt){
+      const remaining=Math.max(
+        0,
+        new Date(freeEarnState.nextClaimAt).getTime()-Date.now()
+      );
+      freeEarnState.remainingMs=remaining;
+      freeEarnState.available=remaining<=0;
+    }
+    updateFreeEarnBanner();
+  };
+
+  tick();
+
+  freeEarnTimerInterval=setInterval(tick,1000);
+  window.__nexoraFreeEarnTimer=freeEarnTimerInterval;
+}
+
+document.addEventListener("visibilitychange",()=>{
+  if(!document.hidden){
+    loadFreeEarningData().catch(()=>{});
+  }
+});
+
+async function loadFreeEarningData(){const d=await apiFetch("/api/free-earning");freeEarnState.amount=Number(d.daily_amount||.003);freeEarnState.referralReward=Number(d.referral_reward||.02);freeEarnState.available=Boolean(d.available);freeEarnState.remainingMs=Number(d.remaining_ms||0);freeEarnState.nextClaimAt=d.next_claim_at||null;freeEarnState.totalClaims=Number(d.total_claims||0);freeEarnState.totalEarned=Number(d.total_free_earned||0);freeEarnState.referralRewardCount=Number(d.referral_reward_count||0);freeEarnState.referralRewardTotal=Number(d.referral_reward_total||0);freeEarnState.referralCount=Number(d.referral_count||0);updateFreeEarnBanner();startFreeEarnTimer();return d}
+async function claimFreeEarning(){const b=document.getElementById("freeEarnClaimBtn");if(b)b.disabled=true;try{const d=await apiFetch("/api/free-earning/claim",{method:"POST"});balance=Number(d.balance||balance);setText("balance",balance.toFixed(4));const usd=document.getElementById("usd");if(usd)usd.textContent=balance.toFixed(2);showToast("+"+Number(d.amount||.003).toFixed(3)+" USDT credited");await loadFreeEarningData();if(document.getElementById("modal")?.classList.contains("show"))await renderFreeEarningModal()}catch(e){showToast(e.message||"Free Earning is not available yet");try{await loadFreeEarningData()}catch(_){}}finally{if(b)b.disabled=!freeEarnState.available}}
 async function renderFreeEarningModal(){const b=document.getElementById("modalBody");if(!b)return;const av=freeEarnState.available;b.innerHTML=`<div class="freeEarnHero"><h3>🎁 Free Earning USDT</h3><p>Exclusive daily reward for eligible active Telegram users. Your reward is secured by the Nexora AI backend.</p><div class="freeEarnAmount"><strong>${freeEarnState.amount.toFixed(3)}</strong><span>USDT / 24H</span></div><div class="freeEarnStatus">${av?"Your daily reward is ready to claim.":"Next reward in "+formatFreeEarnTime(freeEarnState.remainingMs)}</div><button id="freeEarnClaimBtn" class="freeEarnClaimBtn" onclick="claimFreeEarning()" ${av?"":"disabled"}>${av?"Claim "+freeEarnState.amount.toFixed(3)+" USDT":"Next Claim • "+formatFreeEarnTime(freeEarnState.remainingMs)}</button></div><div class="freeEarnGrid"><div class="freeEarnMini"><span>Total Free Claims</span><b>${freeEarnState.totalClaims}</b></div><div class="freeEarnMini"><span>Total Free Earned</span><b>${freeEarnState.totalEarned.toFixed(4)} USDT</b></div><div class="freeEarnMini"><span>Total Referrals</span><b>${freeEarnState.referralCount}</b></div><div class="freeEarnMini"><span>Referral Rewards</span><b>${freeEarnState.referralRewardTotal.toFixed(4)} USDT</b></div></div><div class="freeEarnReferral"><b>🔗 0.02 USDT per valid referral</b><p>One-time reward for each unique valid referral. The existing 5% NFT purchase referral commission remains separate and unchanged.</p></div><button class="freeEarnNftBtn" onclick="closeModal();openNFT()">💎 NFT COLLECTION &nbsp;›</button><div class="freeEarnNote">Daily reward timer is 24 hours from your last successful claim. Banned accounts are not eligible. Referral rewards are credited only once per referred Telegram account.</div>`}
 async function openFreeEarning(){openModal("Free Earning USDT","Daily reward • Referral reward • NFT Collection",'<div class="notice">Loading Free Earning...</div>','freeEarnSheet');try{await loadFreeEarningData();await renderFreeEarningModal()}catch(e){const b=document.getElementById("modalBody");if(b)b.innerHTML=`<div class="notice">${esc(e.message||"Unable to load Free Earning right now.")}</div>`}}
-document.addEventListener("visibilitychange",()=>{if(!document.hidden)loadFreeEarningData().catch(()=>{})});
-async function openEarningasync function openEarning(){
+async function openEarning(){
   openModal(
     'Earning USDT',
     'Daily earning history & performance',
