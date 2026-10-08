@@ -224,7 +224,13 @@ button,input{font:inherit}button{color:inherit}
 .referralShareIcon.more{background:linear-gradient(135deg,#b8ffd2,#52e89a);color:#063720}
 .referralShareBtn.more{grid-column:1/-1}
 
-.payoutWide{margin-top:7px;background:linear-gradient(90deg,#f5d889,#d9b65b);color:#201707;border-color:#d8b65a}.payoutWide:active{transform:scale(.99)}</style>
+.payoutWide{margin-top:7px;background:linear-gradient(90deg,#f5d889,#d9b65b);color:#201707;border-color:#d8b65a}.payoutWide:active{transform:scale(.99)}
+.freeEarnHistoryPanel{margin-top:12px;padding:14px;border:1px solid rgba(80,255,170,.22);border-radius:16px;background:rgba(0,40,25,.28)}
+.freeEarnHistoryPanel h4{margin:0 0 10px;font-size:15px;color:#f5fff9}
+.freeEarnHistoryRow{display:flex;justify-content:space-between;gap:10px;align-items:center;padding:10px 0;border-bottom:1px solid rgba(255,255,255,.08)}
+.freeEarnHistoryRow:last-child{border-bottom:0}
+.freeEarnHistoryRow b{display:block;color:#70ffa9;font-size:14px}.freeEarnHistoryRow small{display:block;color:#9fb7ac;font-size:11px;margin-top:3px}.freeEarnHistoryRow>span{font-size:9px;color:#9fffc5;white-space:nowrap}.freeEarnHistoryEmpty{padding:10px 0;color:#91a99e;font-size:12px}
+</style>
 
 <style id="nft-premium-final-tuning">
 /* Final NFT visual tuning — no plan/backend logic changed */
@@ -490,40 +496,21 @@ function showToast(m){const t=document.getElementById('toast');if(!t)return;t.te
 function goHome(){closeModal();window.scrollTo({top:0,behavior:'smooth'})}
 
 let freeEarnTimerInterval=window.__nexoraFreeEarnTimer||null;
-let freeEarnState={amount:.003,referralReward:.02,available:false,remainingMs:0,nextClaimAt:null,totalClaims:0,totalEarned:0,referralRewardCount:0,referralRewardTotal:0,referralCount:0};
+let freeEarnState={amount:.003,referralReward:.02,available:false,remainingMs:0,nextClaimAt:null,totalClaims:0,totalEarned:0,referralRewardCount:0,referralRewardTotal:0,referralCount:0,claimHistory:[],referralHistory:[]};
 function formatFreeEarnTime(ms){if(!Number.isFinite(ms)||ms<=0)return"READY";const s=Math.ceil(ms/1000),h=Math.floor(s/3600),m=Math.floor((s%3600)/60),x=s%60;return[h,m,x].map(v=>String(v).padStart(2,"0")).join(":")}
-function updateFreeEarnBanner(){const e=document.getElementById("freeEarnBannerTimer");if(e)e.textContent=freeEarnState.available?"READY":formatFreeEarnTime(freeEarnState.remainingMs)}
-function startFreeEarnTimer(){
-  if(freeEarnTimerInterval)clearInterval(freeEarnTimerInterval);
-
-  const tick=()=>{
-    if(freeEarnState.nextClaimAt){
-      const remaining=Math.max(
-        0,
-        new Date(freeEarnState.nextClaimAt).getTime()-Date.now()
-      );
-      freeEarnState.remainingMs=remaining;
-      freeEarnState.available=remaining<=0;
-    }
-    updateFreeEarnBanner();
-  };
-
-  tick();
-
-  freeEarnTimerInterval=setInterval(tick,1000);
-  window.__nexoraFreeEarnTimer=freeEarnTimerInterval;
-}
-
-document.addEventListener("visibilitychange",()=>{
-  if(!document.hidden){
-    loadFreeEarningData().catch(()=>{});
-  }
-});
-
-async function loadFreeEarningData(){const d=await apiFetch("/api/free-earning");freeEarnState.amount=Number(d.daily_amount||.003);freeEarnState.referralReward=Number(d.referral_reward||.02);freeEarnState.available=Boolean(d.available);freeEarnState.remainingMs=Number(d.remaining_ms||0);freeEarnState.nextClaimAt=d.next_claim_at||null;freeEarnState.totalClaims=Number(d.total_claims||0);freeEarnState.totalEarned=Number(d.total_free_earned||0);freeEarnState.referralRewardCount=Number(d.referral_reward_count||0);freeEarnState.referralRewardTotal=Number(d.referral_reward_total||0);freeEarnState.referralCount=Number(d.referral_count||0);updateFreeEarnBanner();startFreeEarnTimer();return d}
-async function claimFreeEarning(){const b=document.getElementById("freeEarnClaimBtn");if(b)b.disabled=true;try{const d=await apiFetch("/api/free-earning/claim",{method:"POST"});balance=Number(d.balance||balance);setText("balance",balance.toFixed(4));const usd=document.getElementById("usd");if(usd)usd.textContent=balance.toFixed(2);showToast("+"+Number(d.amount||.003).toFixed(3)+" USDT credited");await loadFreeEarningData();if(document.getElementById("modal")?.classList.contains("show"))await renderFreeEarningModal()}catch(e){showToast(e.message||"Free Earning is not available yet");try{await loadFreeEarningData()}catch(_){}}finally{if(b)b.disabled=!freeEarnState.available}}
-async function renderFreeEarningModal(){const b=document.getElementById("modalBody");if(!b)return;const av=freeEarnState.available;b.innerHTML=`<div class="freeEarnHero"><h3>🎁 Free Earning USDT</h3><p>Exclusive daily reward for eligible active Telegram users. Your reward is secured by the Nexora AI backend.</p><div class="freeEarnAmount"><strong>${freeEarnState.amount.toFixed(3)}</strong><span>USDT / 24H</span></div><div class="freeEarnStatus">${av?"Your daily reward is ready to claim.":"Next reward in "+formatFreeEarnTime(freeEarnState.remainingMs)}</div><button id="freeEarnClaimBtn" class="freeEarnClaimBtn" onclick="claimFreeEarning()" ${av?"":"disabled"}>${av?"Claim "+freeEarnState.amount.toFixed(3)+" USDT":"Next Claim • "+formatFreeEarnTime(freeEarnState.remainingMs)}</button></div><div class="freeEarnGrid"><div class="freeEarnMini"><span>Total Free Claims</span><b>${freeEarnState.totalClaims}</b></div><div class="freeEarnMini"><span>Total Free Earned</span><b>${freeEarnState.totalEarned.toFixed(4)} USDT</b></div><div class="freeEarnMini"><span>Total Referrals</span><b>${freeEarnState.referralCount}</b></div><div class="freeEarnMini"><span>Referral Rewards</span><b>${freeEarnState.referralRewardTotal.toFixed(4)} USDT</b></div></div><div class="freeEarnReferral"><b>🔗 0.02 USDT per valid referral</b><p>One-time reward for each unique valid referral. The existing 5% NFT purchase referral commission remains separate and unchanged.</p></div><button class="freeEarnNftBtn" onclick="closeModal();openNFT()">💎 NFT COLLECTION &nbsp;›</button><div class="freeEarnNote">Daily reward timer is 24 hours from your last successful claim. Banned accounts are not eligible. Referral rewards are credited only once per referred Telegram account.</div>`}
+function freeEarnRemainingFromClock(){if(!freeEarnState.nextClaimAt)return Number(freeEarnState.remainingMs||0);const t=new Date(freeEarnState.nextClaimAt).getTime();if(!Number.isFinite(t))return Number(freeEarnState.remainingMs||0);return Math.max(0,t-Date.now())}
+function syncFreeEarnClockState(){freeEarnState.remainingMs=freeEarnRemainingFromClock();freeEarnState.available=freeEarnState.remainingMs<=0;if(freeEarnState.available)freeEarnState.remainingMs=0;return freeEarnState.available}
+function updateFreeEarnBanner(){syncFreeEarnClockState();const e=document.getElementById("freeEarnBannerTimer");if(e)e.textContent=freeEarnState.available?"READY":formatFreeEarnTime(freeEarnState.remainingMs)}
+function startFreeEarnTimer(){if(freeEarnTimerInterval)clearInterval(freeEarnTimerInterval);const tick=async()=>{const wasReady=freeEarnState.available;const ready=syncFreeEarnClockState();updateFreeEarnBanner();if(ready&&!wasReady){try{await loadFreeEarningData()}catch(e){}}};tick();freeEarnTimerInterval=setInterval(tick,1000);window.__nexoraFreeEarnTimer=freeEarnTimerInterval}
+async function loadFreeEarningData(){const d=await apiFetch("/api/free-earning");freeEarnState.amount=Number(d.daily_amount||.003);freeEarnState.referralReward=Number(d.referral_reward||.02);freeEarnState.available=Boolean(d.available);freeEarnState.remainingMs=Number(d.remaining_ms||0);freeEarnState.nextClaimAt=d.next_claim_at||null;freeEarnState.totalClaims=Number(d.total_claims||0);freeEarnState.totalEarned=Number(d.total_free_earned||0);freeEarnState.referralRewardCount=Number(d.referral_reward_count||0);freeEarnState.referralRewardTotal=Number(d.referral_reward_total||0);freeEarnState.referralCount=Number(d.referral_count||0);freeEarnState.claimHistory=Array.isArray(d.claim_history)?d.claim_history:[];freeEarnState.referralHistory=Array.isArray(d.referral_history)?d.referral_history:[];syncFreeEarnClockState();updateFreeEarnBanner();startFreeEarnTimer();return d}
+function formatFreeEarnHistoryDate(v){const d=new Date(v);if(!Number.isFinite(d.getTime()))return"—";return d.toLocaleString(undefined,{day:"2-digit",month:"short",year:"numeric",hour:"2-digit",minute:"2-digit"})}
+function renderFreeEarnHistory(){const rows=freeEarnState.claimHistory||[];if(!rows.length)return'<div class="freeEarnHistoryEmpty">No Free Earning claim history yet.</div>';return rows.map(r=>`<div class="freeEarnHistoryRow"><div><b>+${Number(r.amount||0).toFixed(3)} USDT</b><small>${formatFreeEarnHistoryDate(r.created_at)}</small></div><span>${esc(String(r.status||"credited").toUpperCase())}</span></div>`).join('')}
+function renderFreeReferralHistory(){const rows=freeEarnState.referralHistory||[];if(!rows.length)return'<div class="freeEarnHistoryEmpty">No 0.02 USDT referral reward history yet.</div>';return rows.map(r=>`<div class="freeEarnHistoryRow"><div><b>+${Number(r.amount||0).toFixed(2)} USDT</b><small>${formatFreeEarnHistoryDate(r.created_at)}${r.referred_name?" • "+esc(r.referred_name):""}</small></div><span>VALID REFERRAL</span></div>`).join('')}
+async function claimFreeEarning(){const b=document.getElementById("freeEarnClaimBtn");if(b)b.disabled=true;try{await loadFreeEarningData();if(!freeEarnState.available){showToast("Next Free Earning in "+formatFreeEarnTime(freeEarnState.remainingMs));await renderFreeEarningModal();return}const d=await apiFetch("/api/free-earning/claim",{method:"POST"});balance=Number(d.balance||balance);setText("balance",balance.toFixed(4));const usd=document.getElementById("usd");if(usd)usd.textContent=balance.toFixed(2);showToast("+"+Number(d.amount||.003).toFixed(3)+" USDT credited");await loadFreeEarningData();if(document.getElementById("modal")?.classList.contains("show"))await renderFreeEarningModal()}catch(e){showToast(e.message||"Free Earning is not available yet");try{await loadFreeEarningData()}catch(_){}}finally{const x=document.getElementById("freeEarnClaimBtn");if(x)x.disabled=!freeEarnState.available}}
+async function renderFreeEarningModal(){const b=document.getElementById("modalBody");if(!b)return;syncFreeEarnClockState();const av=freeEarnState.available;b.innerHTML=`<div class="freeEarnHero"><h3>🎁 Free Earning USDT</h3><p>Exclusive daily reward for eligible active Telegram users. Your reward is secured by the Nexora AI backend.</p><div class="freeEarnAmount"><strong>${freeEarnState.amount.toFixed(3)}</strong><span>USDT / 24H</span></div><div class="freeEarnStatus">${av?"Your daily reward is ready to claim.":"Next reward in "+formatFreeEarnTime(freeEarnState.remainingMs)}</div><button id="freeEarnClaimBtn" class="freeEarnClaimBtn" onclick="claimFreeEarning()" ${av?"":"disabled"}>${av?"Claim "+freeEarnState.amount.toFixed(3)+" USDT":"Next Claim • "+formatFreeEarnTime(freeEarnState.remainingMs)}</button></div><div class="freeEarnGrid"><div class="freeEarnMini"><span>Total Free Claims</span><b>${freeEarnState.totalClaims}</b></div><div class="freeEarnMini"><span>Total Free Earned</span><b>${freeEarnState.totalEarned.toFixed(4)} USDT</b></div><div class="freeEarnMini"><span>Total Referrals</span><b>${freeEarnState.referralCount}</b></div><div class="freeEarnMini"><span>Referral Rewards</span><b>${freeEarnState.referralRewardTotal.toFixed(4)} USDT</b></div></div><div class="freeEarnReferral"><b>🔗 0.02 USDT per valid referral</b><p>One-time reward for each unique valid referral. The existing 5% NFT purchase referral commission remains separate and unchanged.</p></div><div class="freeEarnHistoryPanel"><h4>📅 Free Earning Claim History</h4>${renderFreeEarnHistory()}</div><div class="freeEarnHistoryPanel"><h4>🔗 0.02 USDT Referral Reward History</h4>${renderFreeReferralHistory()}</div><button class="freeEarnNftBtn" onclick="closeModal();openNFT()">💎 NFT COLLECTION &nbsp;›</button><div class="freeEarnNote">Daily reward timer is 24 hours from your last successful claim. Banned accounts are not eligible. Referral rewards are credited only once per referred Telegram account.</div>`}
 async function openFreeEarning(){openModal("Free Earning USDT","Daily reward • Referral reward • NFT Collection",'<div class="notice">Loading Free Earning...</div>','freeEarnSheet');try{await loadFreeEarningData();await renderFreeEarningModal()}catch(e){const b=document.getElementById("modalBody");if(b)b.innerHTML=`<div class="notice">${esc(e.message||"Unable to load Free Earning right now.")}</div>`}}
+
+document.addEventListener("visibilitychange",()=>{if(document.visibilityState==="visible"){loadFreeEarningData().catch(()=>{});}});
 async function openEarning(){
   openModal(
     'Earning USDT',
